@@ -15,10 +15,13 @@ Este arquivo apresenta o status atualizado do desenvolvimento da primeira versã
    * Configuração do driver de envio de e-mails em `config/mail.php` e `.env` apontando para o servidor local de SMTP na porta `1025`.
    * Criação de templates de e-mail responsivos, modernos e elegantes alinhados ao visual premium da marca: `password-recovery.blade.php` e `email-validation.blade.php`.
    * Criação das classes de e-mail tipadas (Mailables) `PasswordRecoveryMail` e `EmailValidationMail` para suporte completo a asserções de testes.
-6. **Armazenamento Escopado S3 Storage**:
-   * Instalação e configuração do pacote `league/flysystem-path-prefixing` para criar um disco de escopo restrito (`s3-uploads`).
-   * Configuração das credenciais locais e endpoint do storage compatível na porta `9001` no arquivo `.env`.
-   * Registro do disco `s3-uploads` direcionando todos os uploads de mídias de veículos de forma isolada ao prefixo de diretório `uploads/`.
+6. **Armazenamento Escopado S3 Storage (`dev-auto-hub`)**:
+   * Configuração das credenciais locais e do bucket unificado `dev-auto-hub` no arquivo `.env`.
+   * Criação e registro de múltiplos discos escopados dinâmicos e isolados por ambiente (`local`, `production`, etc.) e domínio de responsabilidade:
+     * `s3-uploads` $\rightarrow$ Prefixo: `[env]/uploads/` (Visibilidade: `public`)
+     * `s3-videos` $\rightarrow$ Prefixo: `[env]/uploads/videos/` (Visibilidade: `public`)
+     * `s3-system` $\rightarrow$ Prefixo: `[env]/system/` (Visibilidade: `private`)
+     * `s3-backups` $\rightarrow$ Prefixo: `[env]/system/backups/` (Visibilidade: `private`)
 7. **Controlador de Autenticação (`AuthController`)**:
    * `POST /api/auth/password/email`: Gera um código aleatório de 6 dígitos para o e-mail solicitado, armazena no Cache do Redis por 60 minutos e dispara o e-mail de recuperação para a caixa de e-mails SMTP de desenvolvimento.
    * `POST /api/auth/password/reset`: Valida o token e o e-mail contra o Cache, e atualiza a senha criptografada do usuário via `Hash::make`.
