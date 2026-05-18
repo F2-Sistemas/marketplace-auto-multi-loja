@@ -141,7 +141,7 @@ const handleSendResetEmail = async () => {
             body: { email: securityEmail.value }
         });
         securityStatusType.value = 'success';
-        securityStatusMsg.value = 'Sucesso! E-mail de recuperação de senha enviado com sucesso via SMTP! Verifique o Mailpit em http://localhost:8025/';
+        securityStatusMsg.value = 'Sucesso! E-mail de recuperação de senha enviado com sucesso via SMTP! Verifique o SMTP Sandbox em http://localhost:8025/';
     } catch (err: any) {
         securityStatusType.value = 'error';
         securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de recuperação.';
@@ -179,7 +179,7 @@ const handleSendVerifyEmail = async () => {
             body: { email: securityEmail.value }
         });
         securityStatusType.value = 'success';
-        securityStatusMsg.value = 'Sucesso! E-mail de validação de conta enviado com sucesso via SMTP! Verifique o Mailpit.';
+        securityStatusMsg.value = 'Sucesso! E-mail de validação de conta enviado com sucesso via SMTP! Verifique a Caixa de Entrada de Desenvolvimento.';
     } catch (err: any) {
         securityStatusType.value = 'error';
         securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de validação.';
@@ -778,14 +778,14 @@ const handleVerifyEmailDirect = async () => {
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs font-bold text-white flex items-center gap-2">
                                         <iconify-icon icon="tabler:mail" class="text-indigo-400 text-lg"></iconify-icon>
-                                        <span>Mailpit (SMTP Dev)</span>
+                                        <span>Mail Service (SMTP Dev)</span>
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-extrabold uppercase">
                                         Porta 1025
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-400 leading-relaxed">
-                                    Servidor SMTP local para captura de e-mails transacionais. Visualize todos os envios de links de redefinição e chaves no painel Web UI.
+                                    Servidor SMTP local para captura de e-mails transacionais. Visualize todos os envios de links de redefinição e chaves no painel Web Mailbox.
                                 </p>
                                 <a
                                     href="http://localhost:8025/"
@@ -793,7 +793,7 @@ const handleVerifyEmailDirect = async () => {
                                     class="w-full py-2 px-3 rounded-lg border border-slate-800 text-slate-300 bg-slate-900 hover:bg-slate-850 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-center"
                                 >
                                     <iconify-icon icon="tabler:external-link" class="text-sm"></iconify-icon>
-                                    <span>Abrir Mailpit UI (:8025)</span>
+                                    <span>Abrir SMTP Mailbox UI (:8025)</span>
                                 </a>
                             </div>
 
@@ -802,14 +802,14 @@ const handleVerifyEmailDirect = async () => {
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs font-bold text-white flex items-center gap-2">
                                         <iconify-icon icon="tabler:cloud" class="text-emerald-400 text-lg"></iconify-icon>
-                                        <span>MinIO (S3 Storage)</span>
+                                        <span>S3 Object Storage</span>
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-extrabold uppercase">
                                         Porta 9001
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-400 leading-relaxed">
-                                    Armazenamento de objetos compatível com AWS S3. A versão Web para gerenciamento e login local está disponível diretamente na porta 9001.
+                                    Armazenamento de objetos compatível com AWS S3. O console web para gerenciamento local está disponível diretamente na porta 9001.
                                 </p>
                                 <a
                                     href="http://localhost:9001/minio/login"
@@ -817,7 +817,7 @@ const handleVerifyEmailDirect = async () => {
                                     class="w-full py-2 px-3 rounded-lg border border-slate-800 text-slate-300 bg-slate-900 hover:bg-slate-850 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-center"
                                 >
                                     <iconify-icon icon="tabler:external-link" class="text-sm"></iconify-icon>
-                                    <span>Abrir MinIO Web (:9001)</span>
+                                    <span>Abrir S3 Console Web (:9001)</span>
                                 </a>
                             </div>
                         </div>
