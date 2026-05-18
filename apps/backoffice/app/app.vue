@@ -16,11 +16,9 @@ const { data: storesResponse, refresh: refreshStores } = await useFetch<any>('ht
 
 const stores = computed<Store[]>(() => {
     if (!storesResponse.value) return [];
-    
+
     // Support both direct array response and wrapped data property
-    const rawList = Array.isArray(storesResponse.value) 
-        ? storesResponse.value 
-        : (storesResponse.value.data || []);
+    const rawList = Array.isArray(storesResponse.value) ? storesResponse.value : storesResponse.value.data || [];
 
     return rawList.map((s: any) => {
         // Map theme accent colors to readable names
@@ -31,9 +29,7 @@ const stores = computed<Store[]>(() => {
         else if (color === '#2563eb' || color === 'blue') accentName = 'blue';
 
         // Check if the store is primary verified and active
-        const domainObj = s.domains && s.domains.length > 0 
-            ? s.domains.find((d: any) => d.is_primary) 
-            : null;
+        const domainObj = s.domains && s.domains.length > 0 ? s.domains.find((d: any) => d.is_primary) : null;
         const resolvedDomain = domainObj ? domainObj.domain : `${s.slug}.rederevenda.com`;
 
         return {
@@ -138,10 +134,11 @@ const handleSendResetEmail = async () => {
         securityStatusMsg.value = '';
         await $fetch('http://localhost:7031/api/auth/password/email', {
             method: 'POST',
-            body: { email: securityEmail.value }
+            body: { email: securityEmail.value },
         });
         securityStatusType.value = 'success';
-        securityStatusMsg.value = 'Sucesso! E-mail de recuperação de senha enviado com sucesso via SMTP! Verifique o SMTP Sandbox em http://localhost:8025/';
+        securityStatusMsg.value =
+            'Sucesso! E-mail de recuperação de senha enviado com sucesso via SMTP! Verifique o SMTP Sandbox em http://localhost:8025/';
     } catch (err: any) {
         securityStatusType.value = 'error';
         securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de recuperação.';
@@ -157,8 +154,8 @@ const handleResetPassword = async () => {
                 email: securityEmail.value,
                 token: securityToken.value,
                 password: securityPassword.value,
-                password_confirmation: securityPasswordConfirm.value
-            }
+                password_confirmation: securityPasswordConfirm.value,
+            },
         });
         securityStatusType.value = 'success';
         securityStatusMsg.value = 'Sucesso! Senha redefinida e atualizada no banco de dados!';
@@ -176,10 +173,11 @@ const handleSendVerifyEmail = async () => {
         securityStatusMsg.value = '';
         await $fetch('http://localhost:7031/api/auth/email/send-verification', {
             method: 'POST',
-            body: { email: securityEmail.value }
+            body: { email: securityEmail.value },
         });
         securityStatusType.value = 'success';
-        securityStatusMsg.value = 'Sucesso! E-mail de validação de conta enviado com sucesso via SMTP! Verifique a Caixa de Entrada de Desenvolvimento.';
+        securityStatusMsg.value =
+            'Sucesso! E-mail de validação de conta enviado com sucesso via SMTP! Verifique a Caixa de Entrada de Desenvolvimento.';
     } catch (err: any) {
         securityStatusType.value = 'error';
         securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de validação.';
@@ -191,7 +189,7 @@ const handleVerifyEmailDirect = async () => {
         securityStatusMsg.value = '';
         await $fetch('http://localhost:7031/api/auth/email/verify', {
             method: 'POST',
-            body: { email: securityEmail.value }
+            body: { email: securityEmail.value },
         });
         securityStatusType.value = 'success';
         securityStatusMsg.value = 'Sucesso! Conta de e-mail ativada e validada com sucesso no banco de dados!';
@@ -634,10 +632,7 @@ const handleVerifyEmailDirect = async () => {
             </div>
 
             <!-- TAB 4: SECURITY & SMTP SIMULATOR -->
-            <div
-                v-if="activeTab === 'security'"
-                class="space-y-8 animate-in fade-in duration-300"
-            >
+            <div v-if="activeTab === 'security'" class="space-y-8 animate-in fade-in duration-300">
                 <!-- STATUS MESSAGE BOX -->
                 <div
                     v-if="securityStatusMsg"
@@ -645,7 +640,7 @@ const handleVerifyEmailDirect = async () => {
                         'p-4 rounded-xl flex items-center gap-3 border animate-in slide-in-from-top-4 duration-200',
                         securityStatusType === 'success'
                             ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                            : 'bg-rose-500/10 border-rose-550/25 text-rose-400'
+                            : 'bg-rose-500/10 border-rose-550/25 text-rose-400',
                     ]"
                 >
                     <iconify-icon
@@ -672,9 +667,15 @@ const handleVerifyEmailDirect = async () => {
                                     v-model="securityEmail"
                                     class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none transition-all"
                                 >
-                                    <option value="admin@rederevenda.com">admin@rederevenda.com (Administrador Central)</option>
-                                    <option value="gerente.natal@autocar.com">gerente.natal@autocar.com (Gerente AutoCar Natal)</option>
-                                    <option value="comprador@gmail.com">comprador@gmail.com (Comprador de Veículos)</option>
+                                    <option value="admin@rederevenda.com">
+                                        admin@rederevenda.com (Administrador Central)
+                                    </option>
+                                    <option value="gerente.natal@autocar.com">
+                                        gerente.natal@autocar.com (Gerente AutoCar Natal)
+                                    </option>
+                                    <option value="comprador@gmail.com">
+                                        comprador@gmail.com (Comprador de Veículos)
+                                    </option>
                                 </select>
                             </div>
 
@@ -780,12 +781,15 @@ const handleVerifyEmailDirect = async () => {
                                         <iconify-icon icon="tabler:mail" class="text-indigo-400 text-lg"></iconify-icon>
                                         <span>Mail Service (SMTP Dev)</span>
                                     </span>
-                                    <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-extrabold uppercase">
+                                    <span
+                                        class="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-extrabold uppercase"
+                                    >
                                         Porta 1025
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-400 leading-relaxed">
-                                    Servidor SMTP local para captura de e-mails transacionais. Visualize todos os envios de links de redefinição e chaves no painel Web Mailbox.
+                                    Servidor SMTP local para captura de e-mails transacionais. Visualize todos os envios
+                                    de links de redefinição e chaves no painel Web Mailbox.
                                 </p>
                                 <a
                                     href="http://localhost:8025/"
@@ -801,15 +805,21 @@ const handleVerifyEmailDirect = async () => {
                             <div class="bg-slate-950 border border-slate-850 rounded-2xl p-5 space-y-4">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs font-bold text-white flex items-center gap-2">
-                                        <iconify-icon icon="tabler:cloud" class="text-emerald-400 text-lg"></iconify-icon>
+                                        <iconify-icon
+                                            icon="tabler:cloud"
+                                            class="text-emerald-400 text-lg"
+                                        ></iconify-icon>
                                         <span>S3 Object Storage</span>
                                     </span>
-                                    <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-extrabold uppercase">
+                                    <span
+                                        class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-extrabold uppercase"
+                                    >
                                         Porta 9001
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-400 leading-relaxed">
-                                    Armazenamento de objetos compatível com AWS S3. O console web para gerenciamento local está disponível diretamente na porta 9001.
+                                    Armazenamento de objetos compatível com AWS S3. O console web para gerenciamento
+                                    local está disponível diretamente na porta 9001.
                                 </p>
                                 <a
                                     href="http://localhost:9001/minio/login"

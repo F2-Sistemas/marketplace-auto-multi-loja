@@ -34,3 +34,52 @@ Toda a documentação técnica detalhada está centralizada no diretório `/docs
 ## Regras de Execução Importantes
 
 Tanto desenvolvedores quanto assistentes de IA devem obrigatoriamente ler o arquivo **`UNIVERSAL-CODE-STYLE-RULES.md`** contido na raiz antes de efetuar qualquer alteração no código. As diretrizes de retorno precoce (`early return`), ausência de cláusulas `else` aninhadas, tipagem forte e validação rápida de dados são estritamente exigidas neste repositório.
+
+----
+
+# Portal Central Agent Design Kit
+
+This package contains a recommended agent-instruction and design-system structure for the vehicle marketplace monorepo.
+
+## Included files
+
+- `AGENTS.md`: root repository instructions for coding agents.
+- `CLAUDE.md`: Claude Code entry instructions.
+- `/apps/portal/AGENTS.md`: app-specific rules for the public marketplace portal.
+- `/apps/storefront/AGENTS.md`: app-specific rules for the multi-store storefront app.
+- `/apps/backoffice/AGENTS.md`: app-specific rules for the administrative backoffice.
+- `/docs/design/portal/design.json`: structured design system for the public portal.
+- `/docs/design/portal/design.md`: human-readable design system for the public portal.
+- `/docs/design/storefront/*`: placeholder design-system files for storefront.
+- `/docs/design/backoffice/*`: placeholder design-system files for backoffice.
+
+## Recommended usage
+
+Copy these files into the root of your monorepo.
+
+Then ask your coding agent to read:
+
+1. `AGENTS.md`;
+2. the nearest app-level `AGENTS.md`;
+3. the relevant files under `/docs/design`.
+
+For portal UI work, the agent must read:
+
+- `/apps/portal/AGENTS.md`
+- `/docs/design/portal/design.json`
+- `/docs/design/portal/design.md`
+
+## Suggested first prompt
+
+```md
+Refactor the UI in `/apps/portal` to follow the portal design system.
+
+Before changing files, read:
+
+- `/AGENTS.md`
+- `/apps/portal/AGENTS.md`
+- `/docs/design/portal/design.json`
+- `/docs/design/portal/design.md`
+
+First inspect the current structure and produce a phased refactor plan. Do not change files yet.
+```

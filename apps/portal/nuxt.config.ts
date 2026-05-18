@@ -12,6 +12,19 @@ export default defineNuxtConfig({
     },
     vite: {
         plugins: [tailwindcss()],
+        server: {
+            // @ts-ignore
+            port: 3000,
+            strictPort: false,
+
+            // host: '0.0.0.0',
+            host: true,
+
+            // allowedHosts: [
+            //     // 'app.domain.com',
+            // ],
+            allowedHosts: true,
+        },
     },
     app: {
         head: {

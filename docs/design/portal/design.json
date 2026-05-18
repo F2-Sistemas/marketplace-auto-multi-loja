@@ -1,0 +1,103 @@
+{
+    "name": "portal-marketplace-design-system",
+    "version": "1.0.0",
+    "app": "apps/portal",
+    "locale": {
+        "default": "pt-BR",
+        "currency": "BRL",
+        "dateFormat": "dd/MM/yyyy"
+    },
+    "visualDirection": [
+        "modern",
+        "clean",
+        "clear",
+        "commercial",
+        "responsive",
+        "light-mode",
+        "marketplace-oriented",
+        "not-bootstrap-like",
+        "not-backoffice-like"
+    ],
+    "tokens": {
+        "fontFamily": {
+            "sans": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+        },
+        "colors": {
+            "brand": {
+                "50": "oklch(0.985 0.012 252)",
+                "100": "oklch(0.965 0.024 252)",
+                "200": "oklch(0.925 0.046 252)",
+                "500": "oklch(0.62 0.17 252)",
+                "600": "oklch(0.52 0.18 252)",
+                "700": "oklch(0.43 0.15 252)",
+                "800": "oklch(0.34 0.11 252)"
+            },
+            "neutral": {
+                "0": "#ffffff",
+                "50": "oklch(0.985 0 0)",
+                "100": "oklch(0.97 0 0)",
+                "150": "oklch(0.95 0 0)",
+                "200": "oklch(0.92 0 0)",
+                "300": "oklch(0.86 0 0)",
+                "500": "oklch(0.55 0 0)",
+                "600": "oklch(0.44 0 0)",
+                "700": "oklch(0.34 0 0)",
+                "900": "oklch(0.18 0 0)",
+                "950": "oklch(0.12 0 0)"
+            }
+        },
+        "radius": {
+            "button": "0.5rem",
+            "input": "0.5rem",
+            "card": "0.875rem",
+            "badge": "0.375rem"
+        },
+        "shadow": {
+            "card": "0 1px 2px rgb(15 23 42 / 0.04)",
+            "cardHover": "0 10px 30px rgb(15 23 42 / 0.08)",
+            "dropdown": "0 16px 40px rgb(15 23 42 / 0.12)",
+            "modal": "0 24px 80px rgb(15 23 42 / 0.18)"
+        },
+        "motion": {
+            "fast": "150ms",
+            "base": "180ms",
+            "slow": "220ms",
+            "easing": "cubic-bezier(0.2, 0, 0, 1)"
+        }
+    },
+    "rules": {
+        "do": [
+            "Use white cards with subtle borders.",
+            "Use light gray page backgrounds.",
+            "Use small or medium buttons.",
+            "Use subtle focus states.",
+            "Use skeleton loading for lists.",
+            "Use i18n for visible text.",
+            "Keep vehicle price visually prominent.",
+            "Keep contact CTAs easy to find."
+        ],
+        "dont": [
+            "Do not use rounded-full as the default.",
+            "Do not use thick focus rings.",
+            "Do not create a Bootstrap-like UI.",
+            "Do not create an admin-looking public portal.",
+            "Do not hardcode visible text in components.",
+            "Do not overload vehicle cards with badges."
+        ]
+    },
+    "components": {
+        "UiButton": ["primary", "secondary", "outline", "ghost", "soft", "danger"],
+        "UiInput": ["default", "error", "disabled"],
+        "UiCard": ["default", "interactive"],
+        "VehicleCard": ["image", "title", "price", "metadata", "store", "location", "favorite"],
+        "VehicleFilters": ["desktop-sidebar", "mobile-drawer", "active-filter-chips"],
+        "VehicleDetailSummary": ["price", "metadata", "store", "primary-contact-cta", "store-website-cta"]
+    },
+    "acceptanceCriteria": [
+        "The home looks like a modern marketplace.",
+        "The listing allows quick vehicle comparison.",
+        "The detail page prioritizes photos, price, and contact.",
+        "The mobile experience has accessible filters and CTAs.",
+        "The UI follows tokens and component rules from this file."
+    ]
+}

@@ -48,7 +48,8 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Líder em Seminovos e Premium no Rio Grande do Norte',
         logoIcon: 'tabler:sun',
         accentGradient: 'from-amber-400 to-orange-500',
-        buttonClass: 'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10',
+        buttonClass:
+            'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10',
     },
     'sp-veiculos': {
         name: 'SP Veículos',
@@ -64,7 +65,8 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Os esportivos e importados mais exclusivos de São Paulo',
         logoIcon: 'tabler:building-skyscraper',
         accentGradient: 'from-red-500 to-rose-600',
-        buttonClass: 'border border-red-500 text-red-400 bg-red-500/5 hover:bg-red-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-sm shadow-red-500/10',
+        buttonClass:
+            'border border-red-500 text-red-400 bg-red-500/5 hover:bg-red-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-sm shadow-red-500/10',
     },
     'euro-select': {
         name: 'Euro Select',
@@ -80,7 +82,8 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Alta costura automotiva: Importados Selecionados',
         logoIcon: 'tabler:crown',
         accentGradient: 'from-blue-400 to-indigo-500',
-        buttonClass: 'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10',
+        buttonClass:
+            'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10',
     },
 };
 
@@ -98,7 +101,11 @@ const hostHeader = computed(() => {
     const host = clientHost || reqHost || '';
 
     // If host is a custom subdomain of rederevenda.com (excluding the main central, api, or backoffice)
-    if (host && host.includes('rederevenda.com') && !['rederevenda.com', 'api.rederevenda.com', 'admin.rederevenda.com'].includes(host)) {
+    if (
+        host &&
+        host.includes('rederevenda.com') &&
+        !['rederevenda.com', 'api.rederevenda.com', 'admin.rederevenda.com'].includes(host)
+    ) {
         return host;
     }
 
@@ -106,7 +113,7 @@ const hostHeader = computed(() => {
     const mapping: Record<string, string> = {
         'natal-motors': 'autocar-natal.app-loja.rederevenda.com',
         'sp-veiculos': 'sp-veiculos.app-loja.rederevenda.com',
-        'euro-select': 'sp-veiculos.app-loja.rederevenda.com' // Map euro-select fallback
+        'euro-select': 'sp-veiculos.app-loja.rederevenda.com', // Map euro-select fallback
     };
     return mapping[currentTenantKey.value] || 'autocar-natal.app-loja.rederevenda.com';
 });
@@ -144,14 +151,16 @@ const currentStore = computed(() => {
     let primaryColor = 'from-red-600 to-rose-700';
     let accentColor = 'text-rose-400';
     let accentGradient = 'from-rose-400 to-red-500';
-    let buttonClass = 'border border-rose-500 text-rose-400 bg-rose-500/5 hover:bg-rose-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50 shadow-sm shadow-rose-500/10';
+    let buttonClass =
+        'border border-rose-500 text-rose-400 bg-rose-500/5 hover:bg-rose-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50 shadow-sm shadow-rose-500/10';
 
     if (accent.includes('#1d4ed8') || accent.includes('#3b82f6') || accent === 'blue' || accent.includes('#0000ff')) {
         theme = 'blue';
         primaryColor = 'from-blue-600 to-indigo-700';
         accentColor = 'text-blue-400';
         accentGradient = 'from-blue-400 to-indigo-500';
-        buttonClass = 'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10';
+        buttonClass =
+            'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10';
     } else if (
         accent.includes('#d97706') ||
         accent.includes('#f59e0b') ||
@@ -162,7 +171,8 @@ const currentStore = computed(() => {
         primaryColor = 'from-amber-500 to-orange-600';
         accentColor = 'text-amber-400';
         accentGradient = 'from-amber-400 to-orange-500';
-        buttonClass = 'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10';
+        buttonClass =
+            'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10';
     }
 
     return {

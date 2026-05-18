@@ -1,0 +1,11 @@
+{
+    "name": "storefront-design-system",
+    "version": "0.1.0",
+    "app": "/apps/storefront",
+    "status": "placeholder",
+    "rules": [
+        "Replace this placeholder before broad UI refactors.",
+        "Keep UI clean, responsive, accessible, and i18n-ready.",
+        "Do not blindly copy portal marketplace patterns into this app."
+    ]
+}

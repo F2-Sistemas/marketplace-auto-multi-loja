@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "vue.volar",
+        "humao.rest-client",
+        "bmewburn.vscode-intelephense-client",
+        "devsense.phptools-vscode",
+        "porifa.laravel-intelephense",
+        "editorconfig.editorconfig",
+        "usernamehw.errorlens",
+        "muath-ye.composer-intelephense",
+        "ctf0.php-namespace-resolver",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+    ]
+}
