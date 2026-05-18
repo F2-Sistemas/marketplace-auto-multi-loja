@@ -171,14 +171,14 @@ const formatPrice = (value: number) => {
                         <a
                             href="http://natal-motors.rederevenda.com:3000"
                             target="_blank"
-                            class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition text-xs font-semibold border border-slate-700"
+                            class="px-3 py-1.5 rounded-lg bg-slate-850 hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-200 text-xs font-semibold border border-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500/50"
                         >
                             Natal Motors
                         </a>
                         <a
                             href="http://sp-veiculos.rederevenda.com:3000"
                             target="_blank"
-                            class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition text-xs font-semibold border border-slate-700"
+                            class="px-3 py-1.5 rounded-lg bg-slate-850 hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-200 text-xs font-semibold border border-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500/50"
                         >
                             SP Veículos
                         </a>
@@ -189,7 +189,7 @@ const formatPrice = (value: number) => {
                     <a
                         href="/admin"
                         target="_blank"
-                        class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-semibold text-sm transition shadow-lg shadow-indigo-600/20"
+                        class="flex items-center gap-2 h-10 px-4 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm shadow-indigo-500/10"
                     >
                         <iconify-icon icon="tabler:dashboard" class="text-lg"></iconify-icon>
                         <span>Painel Admin</span>
@@ -372,7 +372,7 @@ const formatPrice = (value: number) => {
                         selectedTransmission = '';
                         maxPrice = 250000;
                     "
-                    class="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-semibold transition"
+                    class="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 rounded-lg px-2 py-1 border border-transparent hover:border-amber-500/20 bg-transparent"
                 >
                     <iconify-icon icon="tabler:x" class="text-sm"></iconify-icon>
                     <span>Limpar Filtros</span>
@@ -457,7 +457,7 @@ const formatPrice = (value: number) => {
                             </div>
                             <button
                                 @click="openVehicleDetails(v)"
-                                class="flex items-center gap-1 px-4 py-2 rounded-xl bg-slate-700 hover:bg-indigo-600 text-white font-semibold text-xs transition"
+                                class="flex items-center gap-1 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/40 text-slate-350 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-500 font-semibold text-xs transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none"
                             >
                                 <span>Ver Detalhes</span>
                                 <iconify-icon icon="tabler:arrow-up-right"></iconify-icon>
@@ -491,7 +491,7 @@ const formatPrice = (value: number) => {
             >
                 <button
                     @click="closeDetails"
-                    class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-950/60 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                    class="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg bg-slate-950/60 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none"
                 >
                     <iconify-icon icon="tabler:x" class="text-lg"></iconify-icon>
                 </button>
@@ -616,7 +616,7 @@ const formatPrice = (value: number) => {
 
                             <button
                                 type="submit"
-                                class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm text-white flex items-center justify-center gap-2 active:scale-[0.99] transition shadow-lg shadow-indigo-600/20"
+                                class="w-full py-2.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none shadow-sm shadow-indigo-500/10"
                             >
                                 <iconify-icon icon="tabler:brand-whatsapp" class="text-xl"></iconify-icon>
                                 <span>Enviar Proposta via AutoHub</span>
