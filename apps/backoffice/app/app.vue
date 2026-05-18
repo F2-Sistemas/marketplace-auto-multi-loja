@@ -809,15 +809,15 @@ const handleVerifyEmailDirect = async () => {
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-400 leading-relaxed">
-                                    Armazenamento de objetos compatível com AWS S3. Todos os uploads de veículos e logos são divididos no prefixo de escopo estruturado `uploads/`.
+                                    Armazenamento de objetos compatível com AWS S3. A versão Web para gerenciamento e login local está disponível diretamente na porta 9001.
                                 </p>
                                 <a
-                                    href="http://localhost:9091/"
+                                    href="http://localhost:9001/minio/login"
                                     target="_blank"
                                     class="w-full py-2 px-3 rounded-lg border border-slate-800 text-slate-300 bg-slate-900 hover:bg-slate-850 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-center"
                                 >
                                     <iconify-icon icon="tabler:external-link" class="text-sm"></iconify-icon>
-                                    <span>Console MinIO (:9091)</span>
+                                    <span>Abrir MinIO Web (:9001)</span>
                                 </a>
                             </div>
                         </div>
