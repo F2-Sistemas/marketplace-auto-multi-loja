@@ -18,106 +18,6 @@ interface Vehicle {
   featured?: boolean
 }
 
-// Simulated active vehicles across the platform
-const vehicles = ref<Vehicle[]>([
-  {
-    id: 1,
-    store_name: 'Natal Motors',
-    store_slug: 'natal-motors',
-    brand: 'Toyota',
-    model: 'Corolla',
-    version: 'GLi 2.0 Flex automatico',
-    price: 85000,
-    year: '2018/2019',
-    mileage: 45000,
-    transmission: 'automatico',
-    fuel: 'flex',
-    color: 'Prata',
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop',
-    featured: true
-  },
-  {
-    id: 2,
-    store_name: 'Natal Motors',
-    store_slug: 'natal-motors',
-    brand: 'Toyota',
-    model: 'Corolla',
-    version: 'Altis 2.0 Flex automatico',
-    price: 120000,
-    year: '2021/2022',
-    mileage: 12000,
-    transmission: 'automatico',
-    fuel: 'flex',
-    color: 'Preto',
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop',
-    featured: false
-  },
-  {
-    id: 3,
-    store_name: 'SP Veículos',
-    store_slug: 'sp-veiculos',
-    brand: 'Honda',
-    model: 'Civic',
-    version: 'EXL 2.0 automatico',
-    price: 115000,
-    year: '2020/2020',
-    mileage: 32000,
-    transmission: 'automatico',
-    fuel: 'flex',
-    color: 'Branco Pérola',
-    image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop',
-    featured: true
-  },
-  {
-    id: 4,
-    store_name: 'SP Veículos',
-    store_slug: 'sp-veiculos',
-    brand: 'Jeep',
-    model: 'Compass',
-    version: 'Longitude 2.0 Diesel 4x4',
-    price: 145000,
-    year: '2019/2020',
-    mileage: 58000,
-    transmission: 'automatico',
-    fuel: 'diesel',
-    color: 'Cinza',
-    image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop',
-    featured: true
-  },
-  {
-    id: 5,
-    store_name: 'Euro Select',
-    store_slug: 'euro-select',
-    brand: 'BMW',
-    model: '320i',
-    version: 'GP 2.0 ActiveFlex automatico',
-    price: 198000,
-    year: '2021/2021',
-    mileage: 24000,
-    transmission: 'automatico',
-    fuel: 'flex',
-    color: 'Azul Portimão',
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=800&auto=format&fit=crop',
-    featured: true
-  },
-  {
-    id: 6,
-    store_name: 'Natal Motors',
-    store_slug: 'natal-motors',
-    brand: 'Volkswagen',
-    model: 'Polo',
-    version: 'Comfortline 1.0 TSI automatico',
-    price: 89000,
-    year: '2022/2023',
-    mileage: 18000,
-    transmission: 'automatico',
-    fuel: 'flex',
-    color: 'Cinza Platinum',
-    image: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800&auto=format&fit=crop',
-    featured: false
-  }
-])
-
 // Filter states
 const search = ref('')
 const selectedBrand = ref('')
@@ -132,17 +32,52 @@ const stores = [
   { name: 'Euro Select', slug: 'euro-select' }
 ]
 
-// Filtered vehicles
-const filteredVehicles = computed(() => {
-  return vehicles.value.filter(v => {
-    const matchesSearch = !search.value || 
-      `${v.brand} ${v.model} ${v.version}`.toLowerCase().includes(search.value.toLowerCase())
-    const matchesBrand = !selectedBrand.value || v.brand === selectedBrand.value
-    const matchesStore = !selectedStore.value || v.store_slug === selectedStore.value
-    const matchesPrice = v.price <= maxPrice.value
-    const matchesTrans = !selectedTransmission.value || v.transmission === selectedTransmission.value
-    
-    return matchesSearch && matchesBrand && matchesStore && matchesPrice && matchesTrans
+// Fetch dynamic vehicles from core REST API
+const { data: apiResponse, pending } = await useFetch<any>('http://localhost:8000/api/vehicles', {
+  query: computed(() => {
+    const params: any = {}
+    if (search.value) params.q = search.value
+    if (selectedBrand.value) {
+      params.q = params.q ? `${params.q} ${selectedBrand.value}` : selectedBrand.value
+    }
+    if (maxPrice.value && maxPrice.value < 250000) {
+      params.price_max = maxPrice.value
+    }
+    if (selectedTransmission.value) {
+      params.transmission = selectedTransmission.value
+    }
+    return params
+  }),
+  watch: [search, selectedBrand, selectedStore, selectedTransmission, maxPrice],
+  headers: computed(() => {
+    const headers: any = {}
+    if (selectedStore.value) {
+      headers['X-Store-Host'] = `${selectedStore.value}.rederevenda.com`
+    }
+    return headers
+  })
+})
+
+// Mapped vehicles computed list
+const filteredVehicles = computed<Vehicle[]>(() => {
+  if (!apiResponse.value || !apiResponse.value.data) return []
+  return apiResponse.value.data.map((v: any) => {
+    return {
+      id: v.id,
+      store_name: v.store ? v.store.name : 'AutoHub',
+      store_slug: v.store ? v.store.slug : '',
+      brand: v.brand ? v.brand.name : '',
+      model: v.model ? v.model.name : '',
+      version: v.version,
+      price: Number(v.price),
+      year: `${v.year_manufacture}/${v.year_model}`,
+      mileage: Number(v.mileage),
+      transmission: v.transmission,
+      fuel: v.fuel,
+      color: v.color,
+      image: v.images && v.images.length > 0 ? v.images[0].image_url : 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop',
+      featured: Number(v.price) >= 120000
+    }
   })
 })
 
@@ -150,6 +85,7 @@ const filteredVehicles = computed(() => {
 const selectedVehicle = ref<Vehicle | null>(null)
 const leadForm = ref({
   name: '',
+  email: '',
   phone: '',
   message: ''
 })
@@ -165,12 +101,30 @@ const closeDetails = () => {
   selectedVehicle.value = null
 }
 
-const submitLead = () => {
-  showLeadSuccess.value = true
-  setTimeout(() => {
-    showLeadSuccess.value = false
-    closeDetails()
-  }, 2500)
+const submitLead = async () => {
+  if (!selectedVehicle.value) return
+  
+  try {
+    await $fetch('http://localhost:8000/api/leads', {
+      method: 'POST',
+      body: {
+        name: leadForm.value.name,
+        email: leadForm.value.email,
+        phone: leadForm.value.phone,
+        message: leadForm.value.message,
+        vehicle_id: selectedVehicle.value.id
+      }
+    })
+    
+    showLeadSuccess.value = true
+    setTimeout(() => {
+      showLeadSuccess.value = false
+      closeDetails()
+    }, 2500)
+  } catch (error) {
+    console.error('Erro ao enviar proposta:', error)
+    alert('Ocorreu um erro ao enviar a proposta. Por favor, tente novamente.')
+  }
 }
 
 const formatPrice = (value: number) => {
@@ -493,8 +447,8 @@ const formatPrice = (value: number) => {
               <span class="text-sm font-semibold">Proposta enviada com sucesso! A loja entrará em contato em breve.</span>
             </div>
 
-            <form v-else @submit.prevent="submitLead" class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+             <form v-else @submit.prevent="submitLead" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Seu Nome</label>
                   <input 
@@ -502,6 +456,16 @@ const formatPrice = (value: number) => {
                     required
                     type="text" 
                     placeholder="Ex: Carlos Silva"
+                    class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-2.5 px-4 text-sm text-slate-200 focus:outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Seu E-mail</label>
+                  <input 
+                    v-model="leadForm.email"
+                    required
+                    type="email" 
+                    placeholder="Ex: carlos@example.com"
                     class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-2.5 px-4 text-sm text-slate-200 focus:outline-none transition-all"
                   />
                 </div>
