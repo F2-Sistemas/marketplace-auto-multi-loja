@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\Brand;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Brand>
+ */
+class BrandFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\App\Models\Brand>
+     */
+    protected $model = Brand::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $name = $this->faker->unique()->randomElement([
+            'Toyota', 'Volkswagen', 'Honda', 'Jeep', 'BMW', 'Chevrolet', 'Ford', 'Hyundai'
+        ]);
+
+        return [
+            'name' => $name,
+            'slug' => strtolower($name),
+            'logo_url' => null,
+        ];
+    }
+}
