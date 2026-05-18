@@ -157,10 +157,10 @@ const formatPlan = (value: string) => {
                     <button
                         @click="activeTab = 'dashboard'"
                         :class="[
-                            'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition',
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                             activeTab === 'dashboard'
-                                ? 'bg-indigo-600 text-white shadow shadow-indigo-600/20'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850',
+                                ? 'bg-indigo-650/15 border border-indigo-500/30 text-indigo-300'
+                                : 'bg-transparent border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850',
                         ]"
                     >
                         <iconify-icon icon="tabler:chart-bar" class="text-lg"></iconify-icon>
@@ -170,10 +170,10 @@ const formatPlan = (value: string) => {
                     <button
                         @click="activeTab = 'stores'"
                         :class="[
-                            'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition',
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                             activeTab === 'stores'
-                                ? 'bg-indigo-600 text-white shadow shadow-indigo-600/20'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850',
+                                ? 'bg-indigo-650/15 border border-indigo-500/30 text-indigo-300'
+                                : 'bg-transparent border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850',
                         ]"
                     >
                         <iconify-icon icon="tabler:building-store" class="text-lg"></iconify-icon>
@@ -183,10 +183,10 @@ const formatPlan = (value: string) => {
                     <button
                         @click="activeTab = 'wizard'"
                         :class="[
-                            'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition',
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                             activeTab === 'wizard'
-                                ? 'bg-indigo-600 text-white shadow shadow-indigo-600/20'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850',
+                                ? 'bg-indigo-650/15 border border-indigo-500/30 text-indigo-300'
+                                : 'bg-transparent border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850',
                         ]"
                     >
                         <iconify-icon icon="tabler:circle-plus" class="text-lg"></iconify-icon>
@@ -354,7 +354,7 @@ const formatPlan = (value: string) => {
 
                         <button
                             @click="activeTab = 'wizard'"
-                            class="mt-6 w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-xs text-white flex items-center justify-center gap-2 active:scale-98 transition shadow-lg shadow-indigo-600/20"
+                            class="mt-6 w-full py-2.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none shadow-sm shadow-indigo-500/10"
                         >
                             <iconify-icon icon="tabler:circle-plus"></iconify-icon>
                             <span>Adicionar Nova Revenda</span>
@@ -372,7 +372,7 @@ const formatPlan = (value: string) => {
                     <h3 class="font-bold text-white text-base">Relação de Tenants de Revendas</h3>
                     <button
                         @click="activeTab = 'wizard'"
-                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white font-bold text-xs transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none shadow-sm shadow-indigo-500/10"
                     >
                         <iconify-icon icon="tabler:circle-plus"></iconify-icon>
                         <span>Novo Tenant</span>
@@ -433,10 +433,10 @@ const formatPlan = (value: string) => {
                                     <button
                                         @click="toggleStoreStatus(s)"
                                         :class="[
-                                            'px-2.5 py-1 rounded text-[10px] font-bold transition active:scale-95',
+                                            'px-2.5 py-1.5 rounded-lg text-[10px] font-bold border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                                             s.status === 'ativo'
-                                                ? 'bg-slate-800 hover:bg-rose-950/20 text-rose-400'
-                                                : 'bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400',
+                                                ? 'border-rose-550/25 text-rose-400 bg-rose-500/5 hover:bg-rose-600 hover:text-white'
+                                                : 'border-indigo-500/30 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white',
                                         ]"
                                     >
                                         {{ s.status === 'ativo' ? 'Desativar' : 'Reativar' }}
@@ -535,7 +535,7 @@ const formatPlan = (value: string) => {
 
                     <button
                         type="submit"
-                        class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm text-white flex items-center justify-center gap-2 active:scale-[0.99] transition shadow-lg shadow-indigo-600/20"
+                        class="w-full py-2.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-600 hover:text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none shadow-sm shadow-indigo-500/10"
                     >
                         <iconify-icon icon="tabler:database-cog"></iconify-icon>
                         <span>Provisionar Tenant Automático</span>
