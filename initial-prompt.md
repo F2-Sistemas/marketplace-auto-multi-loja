@@ -318,3 +318,15 @@ CRITÉRIO DE SUCESSO
 O projeto será considerado bem encaminhado apenas quando existir uma base sólida, coerente e executável, com as aplicações principais estruturadas, documentação inicial criada e pronto para receber as primeiras features do MVP.
 
 Comece lendo o documento principal e o UNIVERSAL-CODE-STYLE-RULES.md. Em seguida, entregue o plano inicial de execução antes de criar ou alterar arquivos.
+----
+caso ocorra de precisar de uma decisão que não foi pensada na documentação inicial, pode tomar as melhores decisões técnicas desde que atenda ao escopo do projeto.
+
+Faça commits a cada evolução do projeto.
+Se a sequencia de desenvolvimento não foi definida, opte pelo backend primeiro.
+Quero testes automatizados para todos os endpoints do backend e todas as regras de negócio da aplicação.
+
+Para vue, use a skill disponivel ou crie uma para vue moderno focado em composition api, reutilização de componentes, uso de composables e se usar pacotes externos, use pacotes se necessário e se : atualizados e de preferencia com grande aceitação pela cominudade.
+
+Para tailwindcss, use a skill "tailwind-ui" como base e pode mesclar com tw-vue
+
+se precisar, pode criar, excluir atualizar as bases de dados usando as credenciais informadas
