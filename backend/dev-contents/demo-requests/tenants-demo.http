@@ -1,0 +1,46 @@
+### AutoHub API - Tenants Demo Requests
+
+@baseUrl = http://localhost:8000
+@portalUrl = http://rederevenda.com
+@tenant1Url = http://autocar-natal.app-loja.rederevenda.com
+@tenant2Url = http://sp-veiculos.app-loja.rederevenda.com
+
+### 1. Welcome Root Endpoint
+GET {{baseUrl}}/
+Accept: application/json
+
+### 2. Resolve Active Tenant info (Main Portal Context - No domain)
+GET {{baseUrl}}/api/tenant
+Accept: application/json
+Host: rederevenda.com
+
+### 3. Resolve Active Tenant info (AutoCar Natal Tenant Context)
+GET {{baseUrl}}/api/tenant
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+### 4. Resolve Active Tenant info (SP Veículos Tenant Context)
+GET {{baseUrl}}/api/tenant
+Accept: application/json
+Host: sp-veiculos.app-loja.rederevenda.com
+
+### 5. List All Stores (Backoffice Central Context)
+GET {{baseUrl}}/api/admin/stores
+Accept: application/json
+
+### 6. Provision a New Store (Tenant Creation Wizard)
+POST {{baseUrl}}/api/admin/stores
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Euro Select Motors",
+  "subdomain": "euro-select",
+  "whatsapp_number": "5511988888888",
+  "accent_color": "#1d4ed8",
+  "plan": "anual"
+}
+
+### 7. Toggle Store Status (Activate / Inactivate)
+POST {{baseUrl}}/api/admin/stores/1/toggle
+Accept: application/json

@@ -1,0 +1,42 @@
+### AutoHub API - Vehicles & Leads Demo Requests
+
+@baseUrl = http://localhost:8000
+@portalUrl = http://rederevenda.com
+@tenant1Url = http://autocar-natal.app-loja.rederevenda.com
+
+### 1. Global Search (Main Portal - lists all vehicles)
+GET {{baseUrl}}/api/vehicles
+Accept: application/json
+Host: rederevenda.com
+
+### 2. Global Search with filters (Text query and Price range)
+GET {{baseUrl}}/api/vehicles?q=corolla&price_min=50000&price_max=120000
+Accept: application/json
+Host: rederevenda.com
+
+### 3. Tenant-Specific Search (AutoCar Natal - filtered automatically)
+GET {{baseUrl}}/api/vehicles
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+### 4. Geolocated Radius Search (Within 50km of Natal/RN coordinates)
+GET {{baseUrl}}/api/vehicles?lat=-5.7944&lng=-35.2110&radius=50
+Accept: application/json
+Host: rederevenda.com
+
+### 5. View Vehicle Details
+GET {{baseUrl}}/api/vehicles/1
+Accept: application/json
+
+### 6. Submit a Client Lead / Proposal
+POST {{baseUrl}}/api/leads
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "João da Silva",
+  "email": "joao@example.com",
+  "phone": "+55 84 99999-8888",
+  "message": "Tenho interesse neste veículo! Aceita troca?",
+  "vehicle_id": 1
+}
