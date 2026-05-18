@@ -15,7 +15,7 @@ class BrandFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\App\Models\Brand>
+     * @var class-string<Brand>
      */
     protected $model = Brand::class;
 

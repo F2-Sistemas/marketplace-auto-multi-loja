@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\File;
 
 class GeneratePortalSitemapJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new job instance.
@@ -60,6 +63,7 @@ class GeneratePortalSitemapJob implements ShouldQueue
         $xml .= '</urlset>';
 
         $directory = public_path('sitemaps');
+
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }

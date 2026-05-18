@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Lead;
-use App\Models\Store;
 use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,7 +16,7 @@ class LeadFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\App\Models\Lead>
+     * @var class-string<Lead>
      */
     protected $model = Lead::class;
 

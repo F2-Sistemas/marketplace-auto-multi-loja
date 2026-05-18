@@ -92,6 +92,7 @@ class VehicleSearchService
 
         // Apply Geo Coordinate Radius Search (Haversine Distance)
         $hasCoordinates = isset($filters['lat'], $filters['lng'], $filters['radius']);
+
         if ($hasCoordinates) {
             $lat = (float) $filters['lat'];
             $lng = (float) $filters['lng'];

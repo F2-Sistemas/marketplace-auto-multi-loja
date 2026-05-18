@@ -6,7 +6,6 @@ namespace App\Jobs;
 
 use App\Models\Store;
 use App\Models\Vehicle;
-use App\Services\TenantManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +15,10 @@ use Illuminate\Support\Facades\File;
 
 class GenerateStoreSitemapJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var int
@@ -92,6 +94,7 @@ class GenerateStoreSitemapJob implements ShouldQueue
         $xml .= '</urlset>';
 
         $directory = public_path('sitemaps');
+
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }

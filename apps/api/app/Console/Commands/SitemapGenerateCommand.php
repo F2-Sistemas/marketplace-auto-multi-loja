@@ -42,6 +42,7 @@ class SitemapGenerateCommand extends Command
             $this->info("Despachando sitemap para a loja ID: {$storeId}...");
             GenerateStoreSitemapJob::dispatch((int) $storeId);
             $this->info("Sucesso!");
+
             return 0;
         }
 
@@ -49,10 +50,12 @@ class SitemapGenerateCommand extends Command
         if ($storeIdsString !== null) {
             $ids = array_filter(explode(',', (string) $storeIdsString));
             $this->info("Despachando sitemaps para as lojas: " . implode(', ', $ids) . "...");
+
             foreach ($ids as $id) {
                 GenerateStoreSitemapJob::dispatch((int) $id);
             }
             $this->info("Sucesso!");
+
             return 0;
         }
 
@@ -74,6 +77,7 @@ class SitemapGenerateCommand extends Command
         }
 
         $this->info("Processamento de sitemaps enviado com sucesso para a fila Redis!");
+
         return 0;
     }
 }

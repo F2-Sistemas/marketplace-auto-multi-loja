@@ -29,7 +29,7 @@ class RestApiEndpointsTest extends TestCase
     /**
      * Test tenant endpoint in Portal context.
      */
-    public function test_tenant_endpoint_returns_portal_context(): void
+    public function testTenantEndpointReturnsPortalContext(): void
     {
         $response = $this->getJson('/api/tenant', [
             'X-Store-Host' => 'rederevenda.com'
@@ -45,7 +45,7 @@ class RestApiEndpointsTest extends TestCase
     /**
      * Test tenant endpoint in Store/Tenant context.
      */
-    public function test_tenant_endpoint_returns_store_context(): void
+    public function testTenantEndpointReturnsStoreContext(): void
     {
         $store = Store::create([
             'public_id' => 'natal-motors',
@@ -86,7 +86,7 @@ class RestApiEndpointsTest extends TestCase
     /**
      * Test vehicle list, search and detail specs.
      */
-    public function test_vehicle_endpoint_listings_and_details(): void
+    public function testVehicleEndpointListingsAndDetails(): void
     {
         $store = Store::create([
             'public_id' => 'sp-veiculos',
@@ -132,7 +132,7 @@ class RestApiEndpointsTest extends TestCase
     /**
      * Test client lead/proposal submission.
      */
-    public function test_lead_submission_persistence(): void
+    public function testLeadSubmissionPersistence(): void
     {
         $store = Store::create([
             'public_id' => 'sp-veiculos',
@@ -186,7 +186,7 @@ class RestApiEndpointsTest extends TestCase
     /**
      * Test central backoffice stores listing and wizard creation.
      */
-    public function test_backoffice_store_listing_and_provisioning(): void
+    public function testBackofficeStoreListingAndProvisioning(): void
     {
         // 1. Create a store
         $store = Store::create([

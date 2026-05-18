@@ -18,7 +18,7 @@ class TenantResolutionTest extends TestCase
     /**
      * Test dynamic tenant resolution by request host header.
      */
-    public function test_resolves_tenant_from_request_host(): void
+    public function testResolvesTenantFromRequestHost(): void
     {
         // 1. Create a store and internal domain
         $store = Store::create([
@@ -55,7 +55,7 @@ class TenantResolutionTest extends TestCase
     /**
      * Test dynamic tenant resolution cache.
      */
-    public function test_caches_tenant_domain_resolutions(): void
+    public function testCachesTenantDomainResolutions(): void
     {
         $store = Store::create([
             'public_id' => 'natal-motors',
@@ -88,7 +88,7 @@ class TenantResolutionTest extends TestCase
     /**
      * Test that technical portal domains are skipped for tenant resolution.
      */
-    public function test_skips_tenant_resolution_for_portal_domains(): void
+    public function testSkipsTenantResolutionForPortalDomains(): void
     {
         app(TenantManager::class)->clear();
 

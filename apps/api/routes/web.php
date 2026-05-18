@@ -1,19 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\AdminStoreController;
 
-Route::get('/', function () {
-    return response()->json([
-        'app' => 'AutoHub API Core',
-        'status' => 'online',
-        'version' => '1.0.0'
-    ]);
-});
+Route::get('/', fn () => response()->json([
+    'app' => 'AutoHub API Core',
+    'status' => 'online',
+    'version' => '1.0.0'
+]));
 
 // Tenant Configuration Endpoint
 Route::get('/api/tenant', [TenantController::class, 'show']);
@@ -29,4 +26,3 @@ Route::post('/api/leads', [LeadController::class, 'store']);
 Route::get('/api/admin/stores', [AdminStoreController::class, 'index']);
 Route::post('/api/admin/stores', [AdminStoreController::class, 'store']);
 Route::post('/api/admin/stores/{id}/toggle', [AdminStoreController::class, 'toggle']);
-

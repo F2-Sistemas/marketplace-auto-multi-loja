@@ -31,6 +31,7 @@ class TenantController extends Controller
             ->get();
 
         $settings = [];
+
         foreach ($settingsRaw as $setting) {
             $settings[$setting->key] = $setting->value;
         }

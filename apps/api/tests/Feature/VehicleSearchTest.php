@@ -22,7 +22,7 @@ class VehicleSearchTest extends TestCase
     /**
      * Test semantic search query filtering.
      */
-    public function test_vehicle_search_filters_results_by_criteria(): void
+    public function testVehicleSearchFiltersResultsByCriteria(): void
     {
         $store = Store::create(['public_id' => 's1', 'name' => 'Store 1', 'slug' => 's1']);
         $brand = Brand::create(['name' => 'Toyota', 'slug' => 'toyota']);
@@ -82,7 +82,7 @@ class VehicleSearchTest extends TestCase
     /**
      * Test coordinates location range query (Haversine).
      */
-    public function test_vehicle_search_supports_coordinate_radius(): void
+    public function testVehicleSearchSupportsCoordinateRadius(): void
     {
         $store = Store::create(['public_id' => 's1', 'name' => 'Store 1', 'slug' => 's1']);
         $brand = Brand::create(['name' => 'Toyota', 'slug' => 'toyota']);
@@ -168,7 +168,7 @@ class VehicleSearchTest extends TestCase
     /**
      * Test tenant data isolation.
      */
-    public function test_tenant_scoping_prevents_cross_tenant_reads(): void
+    public function testTenantScopingPreventsCrossTenantReads(): void
     {
         $store1 = Store::create(['public_id' => 's1', 'name' => 'Store 1', 'slug' => 's1']);
         $store2 = Store::create(['public_id' => 's2', 'name' => 'Store 2', 'slug' => 's2']);

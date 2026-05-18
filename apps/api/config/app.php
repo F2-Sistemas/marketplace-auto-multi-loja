@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -134,5 +133,4 @@ return [
         'backoffice' => env('LOCAL_BACKOFFICE_DOMAIN', 'admin.rederevenda.com'),
         'storefront_base' => env('LOCAL_STOREFRONT_BASE_DOMAIN', 'app-loja.rederevenda.com'),
     ],
-
 ];

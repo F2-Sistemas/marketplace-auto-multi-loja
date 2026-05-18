@@ -32,6 +32,7 @@ class AdminStoreController extends Controller
                 ->get();
 
             $settings = [];
+
             foreach ($settingsRaw as $s) {
                 $settings[$s->key] = $s->value;
             }
@@ -74,7 +75,7 @@ class AdminStoreController extends Controller
         $name = $request->input('name');
         $subdomain = Str::slug($request->input('subdomain'));
         $publicId = $subdomain;
-        
+
         $domainName = "{$subdomain}.rederevenda.com";
 
         // Start transaction
@@ -145,9 +146,9 @@ class AdminStoreController extends Controller
                 'store_id' => $storeId,
                 'domain' => $domainName,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'message' => 'Erro interno ao provisionar tenant.',
                 'error' => $e->getMessage(),

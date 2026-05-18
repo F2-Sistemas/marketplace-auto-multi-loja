@@ -16,7 +16,7 @@ class VehicleModelFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\App\Models\VehicleModel>
+     * @var class-string<VehicleModel>
      */
     protected $model = VehicleModel::class;
 

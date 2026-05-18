@@ -23,7 +23,7 @@ class SitemapCompilationTest extends TestCase
     /**
      * Test console sitemap command compiles XML correctly.
      */
-    public function test_sitemap_command_generates_xml_on_disk(): void
+    public function testSitemapCommandGeneratesXmlOnDisk(): void
     {
         // 1. Create a store, domain, and vehicle
         $store = Store::create(['public_id' => 's1', 'name' => 'Store 1', 'slug' => 's1', 'status' => 'active']);
@@ -59,6 +59,7 @@ class SitemapCompilationTest extends TestCase
 
         // Cleanup any existing sitemaps
         $directory = public_path('sitemaps');
+
         if (File::exists($directory)) {
             File::deleteDirectory($directory);
         }

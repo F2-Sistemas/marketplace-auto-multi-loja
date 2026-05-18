@@ -11,9 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(\App\Services\TenantManager::class, function () {
-            return new \App\Services\TenantManager();
-        });
+        $this->app->singleton(\App\Services\TenantManager::class, fn () => new \App\Services\TenantManager());
     }
 
     /**

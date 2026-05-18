@@ -7,6 +7,33 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $store_id
+ * @property string $domain
+ * @property string $type
+ * @property bool $is_primary
+ * @property bool $is_verified
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read Store $store
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereDomain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereIsPrimary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereIsVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereStoreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoreDomain whereVerifiedAt($value)
+ * @mixin \Eloquent
+ */
 class StoreDomain extends Model
 {
     /**

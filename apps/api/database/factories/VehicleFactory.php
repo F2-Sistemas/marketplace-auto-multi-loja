@@ -20,7 +20,7 @@ class VehicleFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\App\Models\Vehicle>
+     * @var class-string<Vehicle>
      */
     protected $model = Vehicle::class;
 
@@ -34,7 +34,7 @@ class VehicleFactory extends Factory
         $brand = Brand::inRandomOrder()->first() ?? Brand::factory()->create();
         $vehicleModel = VehicleModel::where('brand_id', $brand->id)->inRandomOrder()->first() ?? VehicleModel::factory()->create(['brand_id' => $brand->id]);
         $city = City::inRandomOrder()->first() ?? City::factory()->create();
-        
+
         $title = "{$brand->name} {$vehicleModel->name} " . $this->faker->randomElement(['Flex automatico', 'Diesel 4x4', 'TSI automatico']);
         $slug = Str::slug($title) . '-' . $this->faker->numberBetween(1000, 9999);
 

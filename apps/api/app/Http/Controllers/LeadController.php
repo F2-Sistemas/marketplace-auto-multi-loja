@@ -39,6 +39,7 @@ class LeadController extends Controller
         // If still no store, resolve store from vehicle
         if ($storeId === null) {
             $vehicle = DB::table('vehicles')->where('id', $request->input('vehicle_id'))->first();
+
             if ($vehicle === null) {
                 return response()->json([
                     'message' => 'Veículo não encontrado.',
