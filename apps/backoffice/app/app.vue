@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 interface Store {
   id: number
@@ -11,36 +11,30 @@ interface Store {
   created_at: string
 }
 
-// Simulated active stores state
-const stores = ref<Store[]>([
-  {
-    id: 1,
-    name: 'Natal Motors',
-    host: 'natal-motors.rederevenda.com',
-    plan: 'anual',
-    status: 'ativo',
-    accentColor: 'amber',
-    created_at: '2026-01-10'
-  },
-  {
-    id: 2,
-    name: 'SP Veículos',
-    host: 'sp-veiculos.rederevenda.com',
-    plan: 'mensal',
-    status: 'ativo',
-    accentColor: 'red',
-    created_at: '2026-02-15'
-  },
-  {
-    id: 3,
-    name: 'Euro Select',
-    host: 'euro-select.rederevenda.com',
-    plan: 'semestral',
-    status: 'ativo',
-    accentColor: 'blue',
-    created_at: '2026-03-01'
-  }
-])
+// Fetch central backoffice stores from Core API
+const { data: storesResponse, refresh: refreshStores } = await useFetch<any>('http://localhost:8000/api/admin/stores')
+
+const stores = computed<Store[]>(() => {
+  if (!storesResponse.value || !storesResponse.value.data) return []
+  return storesResponse.value.data.map((s: any) => {
+    // Map theme accent colors to readable names
+    let accentName = 'indigo'
+    const color = s.settings?.accent_color || ''
+    if (color === '#f59e0b' || color === 'amber') accentName = 'amber'
+    else if (color === '#e11d48' || color === 'red') accentName = 'red'
+    else if (color === '#2563eb' || color === 'blue') accentName = 'blue'
+
+    return {
+      id: s.id,
+      name: s.name,
+      host: s.domain || `${s.slug}.rederevenda.com`,
+      plan: s.settings?.plan || 'mensal',
+      status: s.is_active ? 'ativo' : 'inativo',
+      accentColor: accentName,
+      created_at: s.created_at ? s.created_at.split('T')[0] : '2026-05-18'
+    }
+  })
+})
 
 const activeTab = ref<'dashboard' | 'stores' | 'wizard'>('dashboard')
 
@@ -54,35 +48,60 @@ const newStore = ref({
 
 const showWizardSuccess = ref(false)
 
-const handleCreateStore = () => {
-  const storeId = stores.value.length + 1
-  stores.value.push({
-    id: storeId,
-    name: newStore.value.name,
-    host: `${newStore.value.subdomain}.rederevenda.com`,
-    plan: newStore.value.plan,
-    status: 'ativo',
-    accentColor: newStore.value.accentColor,
-    created_at: new Date().toISOString().split('T')[0]
-  })
-  
-  showWizardSuccess.value = true
-  
-  // Reset form
-  setTimeout(() => {
-    showWizardSuccess.value = false
-    newStore.value = {
-      name: '',
-      subdomain: '',
-      plan: 'mensal',
-      accentColor: 'indigo'
-    }
-    activeTab.value = 'stores'
-  }, 2000)
+const handleCreateStore = async () => {
+  try {
+    let hexColor = '#4f46e5' // indigo
+    if (newStore.value.accentColor === 'amber') hexColor = '#f59e0b'
+    else if (newStore.value.accentColor === 'red') hexColor = '#e11d48'
+    else if (newStore.value.accentColor === 'blue') hexColor = '#2563eb'
+
+    await $fetch('http://localhost:8000/api/admin/stores', {
+      method: 'POST',
+      body: {
+        name: newStore.value.name,
+        slug: newStore.value.subdomain,
+        domain: `${newStore.value.subdomain}.rederevenda.com`,
+        settings: {
+          plan: newStore.value.plan,
+          accent_color: hexColor,
+          address: 'Av. das Nações, 1000 - Centro',
+          phone: '(84) 99999-8888',
+          whatsapp_number: '5584999998888',
+          tagline: 'Sua melhor escolha em seminovos de procedência!'
+        }
+      }
+    })
+
+    showWizardSuccess.value = true
+    await refreshStores()
+    
+    // Reset form
+    setTimeout(() => {
+      showWizardSuccess.value = false
+      newStore.value = {
+        name: '',
+        subdomain: '',
+        plan: 'mensal',
+        accentColor: 'indigo'
+      }
+      activeTab.value = 'stores'
+    }, 2000)
+  } catch (error) {
+    console.error('Erro ao provisionar tenant:', error)
+    alert('Erro ao provisionar o tenant. Certifique-se de que a API está ativa e o subdomínio não está em uso.')
+  }
 }
 
-const toggleStoreStatus = (store: Store) => {
-  store.status = store.status === 'ativo' ? 'inativo' : 'ativo'
+const toggleStoreStatus = async (store: Store) => {
+  try {
+    await $fetch(`http://localhost:8000/api/admin/stores/${store.id}/toggle`, {
+      method: 'POST'
+    })
+    await refreshStores()
+  } catch (error) {
+    console.error('Erro ao alternar status da loja:', error)
+    alert('Erro ao alterar status da loja. Certifique-se de que a API está ativa.')
+  }
 }
 
 const formatPlan = (value: string) => {
