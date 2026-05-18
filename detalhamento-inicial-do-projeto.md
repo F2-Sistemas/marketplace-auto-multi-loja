@@ -236,7 +236,7 @@ O projeto deve usar abordagem multi-tenant com banco central.
 
 A API deve usar `store_id` ou `tenant_id` nas tabelas operacionais.
 
-O pacote `tenancy for Laravel` pode ser usado para facilitar:
+O pacote `tenancy for Laravel` (https://tenancyforlaravel.com/) pode ser usado para facilitar:
 
 * contexto do tenant;
 * cache tenant-aware;
