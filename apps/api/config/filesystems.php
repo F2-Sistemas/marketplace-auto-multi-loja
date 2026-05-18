@@ -57,6 +57,12 @@ return [
             'throw' => false,
             'report' => false,
         ],
+
+        's3-uploads' => [
+            'driver' => 'scoped',
+            'disk' => 's3',
+            'prefix' => 'uploads',
+        ],
     ],
 
     /*

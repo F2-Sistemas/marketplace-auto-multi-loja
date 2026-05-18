@@ -5,6 +5,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\AdminStoreController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', fn () => response()->json([
     'app' => 'AutoHub API Core',
@@ -26,3 +27,9 @@ Route::post('/api/leads', [LeadController::class, 'store']);
 Route::get('/api/admin/stores', [AdminStoreController::class, 'index']);
 Route::post('/api/admin/stores', [AdminStoreController::class, 'store']);
 Route::post('/api/admin/stores/{id}/toggle', [AdminStoreController::class, 'toggle']);
+
+// Authentication, Password Recovery & Email Verification
+Route::post('/api/auth/password/email', [AuthController::class, 'sendResetLink']);
+Route::post('/api/auth/password/reset', [AuthController::class, 'resetPassword']);
+Route::post('/api/auth/email/send-verification', [AuthController::class, 'sendVerification']);
+Route::post('/api/auth/email/verify', [AuthController::class, 'verifyEmail']);

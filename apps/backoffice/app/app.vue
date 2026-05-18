@@ -48,7 +48,7 @@ const stores = computed<Store[]>(() => {
     });
 });
 
-const activeTab = ref<'dashboard' | 'stores' | 'wizard'>('dashboard');
+const activeTab = ref<'dashboard' | 'stores' | 'wizard' | 'security'>('dashboard');
 
 // New store form state
 const newStore = ref({
@@ -124,6 +124,82 @@ const formatPlan = (value: string) => {
     };
     return map[value] || value;
 };
+
+// Security simulator state
+const securityEmail = ref('admin@rederevenda.com');
+const securityToken = ref('');
+const securityPassword = ref('');
+const securityPasswordConfirm = ref('');
+const securityStatusMsg = ref('');
+const securityStatusType = ref<'success' | 'error' | ''>('');
+
+const handleSendResetEmail = async () => {
+    try {
+        securityStatusMsg.value = '';
+        await $fetch('http://localhost:8000/api/auth/password/email', {
+            method: 'POST',
+            body: { email: securityEmail.value }
+        });
+        securityStatusType.value = 'success';
+        securityStatusMsg.value = 'Sucesso! E-mail de recuperação de senha enviado com sucesso via SMTP! Verifique o Mailpit em http://localhost:8025/';
+    } catch (err: any) {
+        securityStatusType.value = 'error';
+        securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de recuperação.';
+    }
+};
+
+const handleResetPassword = async () => {
+    try {
+        securityStatusMsg.value = '';
+        await $fetch('http://localhost:8000/api/auth/password/reset', {
+            method: 'POST',
+            body: {
+                email: securityEmail.value,
+                token: securityToken.value,
+                password: securityPassword.value,
+                password_confirmation: securityPasswordConfirm.value
+            }
+        });
+        securityStatusType.value = 'success';
+        securityStatusMsg.value = 'Sucesso! Senha redefinida e atualizada no banco de dados!';
+        securityToken.value = '';
+        securityPassword.value = '';
+        securityPasswordConfirm.value = '';
+    } catch (err: any) {
+        securityStatusType.value = 'error';
+        securityStatusMsg.value = err.data?.message || 'Erro ao redefinir a senha.';
+    }
+};
+
+const handleSendVerifyEmail = async () => {
+    try {
+        securityStatusMsg.value = '';
+        await $fetch('http://localhost:8000/api/auth/email/send-verification', {
+            method: 'POST',
+            body: { email: securityEmail.value }
+        });
+        securityStatusType.value = 'success';
+        securityStatusMsg.value = 'Sucesso! E-mail de validação de conta enviado com sucesso via SMTP! Verifique o Mailpit.';
+    } catch (err: any) {
+        securityStatusType.value = 'error';
+        securityStatusMsg.value = err.data?.message || 'Erro ao disparar e-mail de validação.';
+    }
+};
+
+const handleVerifyEmailDirect = async () => {
+    try {
+        securityStatusMsg.value = '';
+        await $fetch('http://localhost:8000/api/auth/email/verify', {
+            method: 'POST',
+            body: { email: securityEmail.value }
+        });
+        securityStatusType.value = 'success';
+        securityStatusMsg.value = 'Sucesso! Conta de e-mail ativada e validada com sucesso no banco de dados!';
+    } catch (err: any) {
+        securityStatusType.value = 'error';
+        securityStatusMsg.value = err.data?.message || 'Erro ao validar e-mail.';
+    }
+};
 </script>
 
 <template>
@@ -192,6 +268,19 @@ const formatPlan = (value: string) => {
                         <iconify-icon icon="tabler:circle-plus" class="text-lg"></iconify-icon>
                         <span>Nova Loja (Tenant)</span>
                     </button>
+
+                    <button
+                        @click="activeTab = 'security'"
+                        :class="[
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
+                            activeTab === 'security'
+                                ? 'bg-indigo-650/15 border border-indigo-500/30 text-indigo-300'
+                                : 'bg-transparent border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850',
+                        ]"
+                    >
+                        <iconify-icon icon="tabler:shield-lock" class="text-lg"></iconify-icon>
+                        <span>Segurança & E-mails</span>
+                    </button>
                 </nav>
             </div>
 
@@ -220,6 +309,7 @@ const formatPlan = (value: string) => {
                         <span v-if="activeTab === 'dashboard'">Painel de Métricas Central</span>
                         <span v-else-if="activeTab === 'stores'">Lojas e Revendas Cadastradas</span>
                         <span v-else-if="activeTab === 'wizard'">Adicionar Novo Tenant (Multi-Loja)</span>
+                        <span v-else-if="activeTab === 'security'">Simulador de Segurança & E-mails SMTP</span>
                     </h1>
                     <p class="text-xs text-slate-500 mt-1">Estatísticas do ecossistema de marketplace em tempo real</p>
                 </div>
@@ -541,6 +631,198 @@ const formatPlan = (value: string) => {
                         <span>Provisionar Tenant Automático</span>
                     </button>
                 </form>
+            </div>
+
+            <!-- TAB 4: SECURITY & SMTP SIMULATOR -->
+            <div
+                v-if="activeTab === 'security'"
+                class="space-y-8 animate-in fade-in duration-300"
+            >
+                <!-- STATUS MESSAGE BOX -->
+                <div
+                    v-if="securityStatusMsg"
+                    :class="[
+                        'p-4 rounded-xl flex items-center gap-3 border animate-in slide-in-from-top-4 duration-200',
+                        securityStatusType === 'success'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                            : 'bg-rose-500/10 border-rose-550/25 text-rose-400'
+                    ]"
+                >
+                    <iconify-icon
+                        :icon="securityStatusType === 'success' ? 'tabler:circle-check' : 'tabler:alert-triangle'"
+                        class="text-2xl"
+                    ></iconify-icon>
+                    <span class="text-sm font-semibold">{{ securityStatusMsg }}</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- CONTROLS & TRIGGERS PANEL -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <iconify-icon icon="tabler:settings" class="text-indigo-400 text-xl"></iconify-icon>
+                                <span>Controle do Simulador</span>
+                            </h3>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                                    Selecione o E-mail de Teste
+                                </label>
+                                <select
+                                    v-model="securityEmail"
+                                    class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none transition-all"
+                                >
+                                    <option value="admin@rederevenda.com">admin@rederevenda.com (Administrador Central)</option>
+                                    <option value="gerente.natal@autocar.com">gerente.natal@autocar.com (Gerente AutoCar Natal)</option>
+                                    <option value="comprador@gmail.com">comprador@gmail.com (Comprador de Veículos)</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button
+                                    @click="handleSendResetEmail"
+                                    class="py-2.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-650 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                >
+                                    <iconify-icon icon="tabler:mail-forward" class="text-base"></iconify-icon>
+                                    <span>Enviar Link de Recuperação</span>
+                                </button>
+
+                                <button
+                                    @click="handleSendVerifyEmail"
+                                    class="py-2.5 rounded-lg border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-600 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                >
+                                    <iconify-icon icon="tabler:mail-check" class="text-base"></iconify-icon>
+                                    <span>Enviar Validação de E-mail</span>
+                                </button>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-800 flex justify-end">
+                                <button
+                                    @click="handleVerifyEmailDirect"
+                                    class="w-full sm:w-auto py-2 px-4 rounded-lg border border-emerald-500 text-emerald-400 bg-emerald-500/5 hover:bg-emerald-600 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none"
+                                >
+                                    <iconify-icon icon="tabler:user-check" class="text-base"></iconify-icon>
+                                    <span>Validar E-mail Diretamente (Ignorar Link)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PASSWORD RESET FORM -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <iconify-icon icon="tabler:key" class="text-indigo-400 text-xl"></iconify-icon>
+                                <span>Formulário de Nova Senha</span>
+                            </h3>
+
+                            <form @submit.prevent="handleResetPassword" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                                        Código de Verificação (6 dígitos obtidos no Mailpit)
+                                    </label>
+                                    <input
+                                        v-model="securityToken"
+                                        required
+                                        type="text"
+                                        placeholder="Ex: 129845"
+                                        class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none transition-all"
+                                    />
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                                            Nova Senha
+                                        </label>
+                                        <input
+                                            v-model="securityPassword"
+                                            required
+                                            type="password"
+                                            placeholder="••••••••"
+                                            class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">
+                                            Confirmar Nova Senha
+                                        </label>
+                                        <input
+                                            v-model="securityPasswordConfirm"
+                                            required
+                                            type="password"
+                                            placeholder="••••••••"
+                                            class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl py-3 px-4 text-sm text-slate-200 focus:outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="w-full py-2.5 rounded-lg border border-indigo-500 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-650 hover:text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer focus:outline-none shadow-sm shadow-indigo-500/10"
+                                >
+                                    <iconify-icon icon="tabler:shield-check"></iconify-icon>
+                                    <span>Redefinir Senha e Atualizar Hash</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ENVIRONMENT STATUS / CONSOLE PANEL -->
+                    <div class="space-y-6">
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+                            <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider">
+                                Status dos Serviços Ativos
+                            </h3>
+
+                            <!-- MAILPIT SMTP STATUS CARD -->
+                            <div class="bg-slate-950 border border-slate-850 rounded-2xl p-5 space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-white flex items-center gap-2">
+                                        <iconify-icon icon="tabler:mail" class="text-indigo-400 text-lg"></iconify-icon>
+                                        <span>Mailpit (SMTP Dev)</span>
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-extrabold uppercase">
+                                        Porta 1025
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 leading-relaxed">
+                                    Servidor SMTP local para captura de e-mails transacionais. Visualize todos os envios de links de redefinição e chaves no painel Web UI.
+                                </p>
+                                <a
+                                    href="http://localhost:8025/"
+                                    target="_blank"
+                                    class="w-full py-2 px-3 rounded-lg border border-slate-800 text-slate-300 bg-slate-900 hover:bg-slate-850 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-center"
+                                >
+                                    <iconify-icon icon="tabler:external-link" class="text-sm"></iconify-icon>
+                                    <span>Abrir Mailpit UI (:8025)</span>
+                                </a>
+                            </div>
+
+                            <!-- MINIO STORAGE CARD -->
+                            <div class="bg-slate-950 border border-slate-850 rounded-2xl p-5 space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-white flex items-center gap-2">
+                                        <iconify-icon icon="tabler:cloud" class="text-emerald-400 text-lg"></iconify-icon>
+                                        <span>MinIO (S3 Storage)</span>
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-extrabold uppercase">
+                                        Porta 9001
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 leading-relaxed">
+                                    Armazenamento de objetos compatível com AWS S3. Todos os uploads de veículos e logos são divididos no prefixo de escopo estruturado `uploads/`.
+                                </p>
+                                <a
+                                    href="http://localhost:9091/"
+                                    target="_blank"
+                                    class="w-full py-2 px-3 rounded-lg border border-slate-800 text-slate-300 bg-slate-900 hover:bg-slate-850 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-center"
+                                >
+                                    <iconify-icon icon="tabler:external-link" class="text-sm"></iconify-icon>
+                                    <span>Console MinIO (:9091)</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

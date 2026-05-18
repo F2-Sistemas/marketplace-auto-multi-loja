@@ -1,0 +1,42 @@
+### AutoHub API - Auth, Password Recovery & Verification Demo Requests
+
+@baseUrl = http://localhost:8000
+
+### 1. Request Password Reset Link (Triggers Gorgeous HTML Email to Mailpit SMTP)
+POST {{baseUrl}}/api/auth/password/email
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@rederevenda.com"
+}
+
+### 2. Reset Password (Requires Email, 6-digit Code from Mailpit, and Password)
+POST {{baseUrl}}/api/auth/password/reset
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@rederevenda.com",
+  "token": "123456",
+  "password": "newsecret123",
+  "password_confirmation": "newsecret123"
+}
+
+### 3. Send Email Verification (Triggers Gorgeous Validation HTML Email)
+POST {{baseUrl}}/api/auth/email/send-verification
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "comprador@gmail.com"
+}
+
+### 4. Verify Email Address (Marks User's Email as Verified)
+POST {{baseUrl}}/api/auth/email/verify
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "comprador@gmail.com"
+}
