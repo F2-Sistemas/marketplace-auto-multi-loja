@@ -61,7 +61,29 @@ return [
         's3-uploads' => [
             'driver' => 'scoped',
             'disk' => 's3',
-            'prefix' => 'uploads',
+            'prefix' => env('APP_ENV', 'local') . '/uploads',
+            'visibility' => 'public',
+        ],
+
+        's3-videos' => [
+            'driver' => 'scoped',
+            'disk' => 's3',
+            'prefix' => env('APP_ENV', 'local') . '/uploads/videos',
+            'visibility' => 'public',
+        ],
+
+        's3-system' => [
+            'driver' => 'scoped',
+            'disk' => 's3',
+            'prefix' => env('APP_ENV', 'local') . '/system',
+            'visibility' => 'private',
+        ],
+
+        's3-backups' => [
+            'driver' => 'scoped',
+            'disk' => 's3',
+            'prefix' => env('APP_ENV', 'local') . '/system/backups',
+            'visibility' => 'private',
         ],
     ],
 
