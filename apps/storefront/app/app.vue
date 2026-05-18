@@ -84,6 +84,9 @@ const tenants: Record<string, StoreDetails> = {
     },
 };
 
+// Search states
+const searchQuery = ref('');
+
 // Simulated active tenant from custom selector
 const currentTenantKey = ref('natal-motors');
 
@@ -164,7 +167,6 @@ const currentStore = computed(() => {
 });
 
 // Search states
-const searchQuery = ref('');
 
 // Filtered / loaded vehicles list
 const filteredVehicles = computed<Vehicle[]>(() => {
