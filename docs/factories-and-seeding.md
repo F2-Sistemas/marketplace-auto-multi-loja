@@ -55,6 +55,46 @@ Cada model fundamental no sistema possui uma factory correspondente na pasta [da
   * `message`: Texto de proposta de interesse aleatório.
   * `status`: `'pending'`.
 
+### `StateFactory`
+* **Modelo**: `App\Models\State`
+* **Campos Gerados**:
+  * `name` / `uf`: Dados estruturados das federações brasileiras (ex: São Paulo - SP, Rio de Janeiro - RJ).
+
+### `CityFactory`
+* **Modelo**: `App\Models\City`
+* **Campos Gerados**:
+  * `state_id`: Estado existente resolvido automaticamente.
+  * `name` / `ibge_code`: Nome e código IBGE únicos.
+  * `latitude` / `longitude`: Coordenadas geográficas reais simuladas para consultas espaciais de raio (Haversine).
+
+### `StoreDomainFactory`
+* **Modelo**: `App\Models\StoreDomain`
+* **Campos Gerados**:
+  * `store_id`: Vínculo a uma loja existente.
+  * `domain`: Nome único do host (ex: `natal-motors.rederevenda.com`).
+  * `type`: `'internal'` ou `'custom'`.
+  * `is_primary` / `is_verified` / `verified_at` / `status`: Atributos de ativação e validação de DNS do tenant.
+
+### `StoreSettingFactory`
+* **Modelo**: `App\Models\StoreSetting`
+* **Campos Gerados**:
+  * `store_id`: Vínculo a uma loja existente.
+  * `key` / `value`: Chaves de preferências dinâmicas (ex: cor do tema, endereço, telefone de contato, etc.).
+
+### `VehicleImageFactory`
+* **Modelo**: `App\Models\VehicleImage`
+* **Campos Gerados**:
+  * `vehicle_id`: Vínculo a um veículo existente.
+  * `image_url`: Endereço simulado de imagens premium.
+  * `is_featured`: Booleano identificador de imagem de capa de vitrine.
+  * `display_order`: Inteiro para ordenamento de exibição na galeria.
+
+### `VehicleFeatureFactory`
+* **Modelo**: `App\Models\VehicleFeature`
+* **Campos Gerados**:
+  * `vehicle_id`: Vínculo a um veículo existente.
+  * `name`: Acessórios e opcionais clássicos (ex: 'Ar Condicionado', 'Teto Solar', 'Câmera de Ré', etc.).
+
 ---
 
 ## 2. Como Rodar no Ambiente Local
