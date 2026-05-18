@@ -48,7 +48,7 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Líder em Seminovos e Premium no Rio Grande do Norte',
         logoIcon: 'tabler:sun',
         accentGradient: 'from-amber-400 to-orange-500',
-        buttonClass: 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20',
+        buttonClass: 'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10',
     },
     'sp-veiculos': {
         name: 'SP Veículos',
@@ -64,7 +64,7 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Os esportivos e importados mais exclusivos de São Paulo',
         logoIcon: 'tabler:building-skyscraper',
         accentGradient: 'from-red-500 to-rose-600',
-        buttonClass: 'bg-red-600 hover:bg-red-700 shadow-red-600/20',
+        buttonClass: 'border border-red-500 text-red-400 bg-red-500/5 hover:bg-red-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-sm shadow-red-500/10',
     },
     'euro-select': {
         name: 'Euro Select',
@@ -80,7 +80,7 @@ const tenants: Record<string, StoreDetails> = {
         tagline: 'Alta costura automotiva: Importados Selecionados',
         logoIcon: 'tabler:crown',
         accentGradient: 'from-blue-400 to-indigo-500',
-        buttonClass: 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
+        buttonClass: 'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10',
     },
 };
 
@@ -127,14 +127,14 @@ const currentStore = computed(() => {
     let primaryColor = 'from-red-600 to-rose-700';
     let accentColor = 'text-rose-400';
     let accentGradient = 'from-rose-400 to-red-500';
-    let buttonClass = 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20';
+    let buttonClass = 'border border-rose-500 text-rose-400 bg-rose-500/5 hover:bg-rose-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50 shadow-sm shadow-rose-500/10';
 
     if (accent.includes('#1d4ed8') || accent.includes('#3b82f6') || accent === 'blue' || accent.includes('#0000ff')) {
         theme = 'blue';
         primaryColor = 'from-blue-600 to-indigo-700';
         accentColor = 'text-blue-400';
         accentGradient = 'from-blue-400 to-indigo-500';
-        buttonClass = 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20';
+        buttonClass = 'border border-blue-500 text-blue-400 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm shadow-blue-500/10';
     } else if (
         accent.includes('#d97706') ||
         accent.includes('#f59e0b') ||
@@ -145,7 +145,7 @@ const currentStore = computed(() => {
         primaryColor = 'from-amber-500 to-orange-600';
         accentColor = 'text-amber-400';
         accentGradient = 'from-amber-400 to-orange-500';
-        buttonClass = 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20';
+        buttonClass = 'border border-amber-500 text-amber-400 bg-amber-500/5 hover:bg-amber-500 hover:text-slate-950 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm shadow-amber-500/10';
     }
 
     return {
@@ -257,10 +257,10 @@ const formatPrice = (value: number) => {
                     :key="key"
                     @click="currentTenantKey = key"
                     :class="[
-                        'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition',
+                        'w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                         currentTenantKey === key
                             ? 'bg-indigo-600/10 border-indigo-500/30 text-indigo-300'
-                            : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200',
+                            : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:bg-slate-900 hover:text-slate-200',
                     ]"
                 >
                     <span class="flex items-center gap-1.5">
@@ -322,7 +322,7 @@ const formatPrice = (value: number) => {
                     :href="`https://wa.me/${currentStore.whatsapp}`"
                     target="_blank"
                     :class="[
-                        'flex items-center gap-2 px-4 py-2 rounded-xl text-white font-bold text-sm transition shadow-lg',
+                        'flex items-center gap-2 h-10 px-4 rounded-lg font-bold text-sm transition-all cursor-pointer',
                         currentStore.buttonClass,
                     ]"
                 >
@@ -448,7 +448,7 @@ const formatPrice = (value: number) => {
                             </div>
                             <button
                                 @click="openVehicleDetails(v)"
-                                class="flex items-center gap-1 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-white font-semibold text-xs transition"
+                                class="flex items-center gap-1 px-3.5 py-1.5 rounded-lg border border-slate-750 bg-slate-800/30 text-slate-300 hover:text-white hover:bg-slate-800 hover:border-slate-600 font-semibold text-xs transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500/50 disabled:cursor-default disabled:pointer-events-none"
                             >
                                 <span>Falar com Consultor</span>
                                 <iconify-icon icon="tabler:chevron-right"></iconify-icon>
@@ -480,7 +480,7 @@ const formatPrice = (value: number) => {
             >
                 <button
                     @click="closeDetails"
-                    class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-950/60 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                    class="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg bg-slate-950/60 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none"
                 >
                     <iconify-icon icon="tabler:x" class="text-lg"></iconify-icon>
                 </button>
@@ -605,7 +605,7 @@ const formatPrice = (value: number) => {
                             <button
                                 type="submit"
                                 :class="[
-                                    'w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 active:scale-[0.99] transition shadow-lg',
+                                    'w-full py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-default disabled:pointer-events-none',
                                     currentStore.buttonClass,
                                 ]"
                             >
