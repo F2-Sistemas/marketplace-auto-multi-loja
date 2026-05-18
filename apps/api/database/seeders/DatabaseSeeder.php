@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             VehicleModelSeeder::class,
             StoreSeeder::class,
             UserSeeder::class,
+            VehicleSeeder::class,
         ]);
     }
 }

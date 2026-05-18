@@ -54,7 +54,7 @@ class VehicleFactory extends Factory
             'color' => $this->faker->safeColorName(),
             'transmission' => $this->faker->randomElement(['automatico', 'manual']),
             'fuel' => $this->faker->randomElement(['flex', 'gasolina', 'diesel', 'eletrico']),
-            'status' => 'available',
+            'status' => 'published',
             'views_count' => $this->faker->numberBetween(0, 500),
         ];
     }
