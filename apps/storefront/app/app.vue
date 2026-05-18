@@ -91,11 +91,28 @@ const searchQuery = ref('');
 const currentTenantKey = ref('natal-motors');
 
 const hostHeader = computed(() => {
-    return `${currentTenantKey.value}.rederevenda.com`;
+    // Attempt to get active domain from headers or window location (useful when loaded through Nginx domains)
+    const headers = useRequestHeaders(['host']);
+    const reqHost = headers.host || '';
+    const clientHost = typeof window !== 'undefined' ? window.location.host : '';
+    const host = clientHost || reqHost || '';
+
+    // If host is a custom subdomain of rederevenda.com (excluding the main central, api, or backoffice)
+    if (host && host.includes('rederevenda.com') && !['rederevenda.com', 'api.rederevenda.com', 'admin.rederevenda.com'].includes(host)) {
+        return host;
+    }
+
+    // Default to mapped selector keys in development
+    const mapping: Record<string, string> = {
+        'natal-motors': 'autocar-natal.app-loja.rederevenda.com',
+        'sp-veiculos': 'sp-veiculos.app-loja.rederevenda.com',
+        'euro-select': 'sp-veiculos.app-loja.rederevenda.com' // Map euro-select fallback
+    };
+    return mapping[currentTenantKey.value] || 'autocar-natal.app-loja.rederevenda.com';
 });
 
 // Fetch dynamic active tenant details from Core API
-const { data: tenantResponse } = await useFetch<any>('http://localhost:8000/api/tenant', {
+const { data: tenantResponse } = await useFetch<any>('http://localhost:7031/api/tenant', {
     headers: computed(() => ({
         'X-Store-Host': hostHeader.value,
     })),
@@ -103,7 +120,7 @@ const { data: tenantResponse } = await useFetch<any>('http://localhost:8000/api/
 });
 
 // Fetch exclusive tenant inventory from Core API
-const { data: vehiclesResponse } = await useFetch<any>('http://localhost:8000/api/vehicles', {
+const { data: vehiclesResponse } = await useFetch<any>('http://localhost:7031/api/vehicles', {
     query: computed(() => {
         const params: any = {};
         if (searchQuery.value) params.q = searchQuery.value;

@@ -29,6 +29,27 @@ class StoreSeeder extends Seeder
                 'status' => 'active',
                 'domain' => 'sp-veiculos.app-loja.rederevenda.com',
             ],
+            [
+                'public_id' => 'loja01',
+                'name' => 'Loja 01 Multimarcas',
+                'slug' => 'loja01',
+                'status' => 'active',
+                'domain' => 'loja01.rederevenda.com',
+            ],
+            [
+                'public_id' => 'loja02',
+                'name' => 'Loja 02 Premium',
+                'slug' => 'loja02',
+                'status' => 'active',
+                'domain' => 'loja02.rederevenda.com',
+            ],
+            [
+                'public_id' => 'tauro-motors',
+                'name' => 'Tauro Motors',
+                'slug' => 'tauro-motors',
+                'status' => 'active',
+                'domain' => 'tauro-motors.rederevenda.com',
+            ],
         ];
 
         foreach ($stores as $storeData) {

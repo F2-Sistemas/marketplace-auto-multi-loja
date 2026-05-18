@@ -5,10 +5,10 @@
     "description": "AutoHub Central - Ecossistema Multi-Loja de Marketplace de Automóveis",
     "scripts": {
         "dev": "concurrently --kill-others-on-fail --restart-tries 3 --restart-after 2000 -n api,portal,backoffice,storefront -c blue,green,magenta,yellow \"npm run dev:api\" \"npm run dev:portal\" \"npm run dev:backoffice\" \"npm run dev:storefront\"",
-        "dev:api": "cd apps/api && php artisan serve --port=8000",
-        "dev:portal": "cd apps/portal && npm run dev -- --port 3000",
-        "dev:backoffice": "cd apps/backoffice && npm run dev -- --port 3001",
-        "dev:storefront": "cd apps/storefront && npm run dev -- --port 3002",
+        "dev:api": "cd apps/api && php artisan serve --port=7031",
+        "dev:portal": "cd apps/portal && npm run dev -- --port 7030",
+        "dev:backoffice": "cd apps/backoffice && npm run dev -- --port 7032",
+        "dev:storefront": "cd apps/storefront && npm run dev -- --port 7033",
         "test:api": "cd apps/api && php vendor/bin/phpunit"
     },
     "devDependencies": {

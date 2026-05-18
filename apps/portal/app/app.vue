@@ -33,7 +33,7 @@ const stores = [
 ];
 
 // Fetch dynamic vehicles from core REST API
-const { data: apiResponse, pending } = await useFetch<any>('http://localhost:8000/api/vehicles', {
+const { data: apiResponse, pending } = await useFetch<any>('http://localhost:7031/api/vehicles', {
     query: computed(() => {
         const params: any = {};
         if (search.value) params.q = search.value;
@@ -108,7 +108,7 @@ const submitLead = async () => {
     if (!selectedVehicle.value) return;
 
     try {
-        await $fetch('http://localhost:8000/api/leads', {
+        await $fetch('http://localhost:7031/api/leads', {
             method: 'POST',
             body: {
                 name: leadForm.value.name,

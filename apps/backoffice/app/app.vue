@@ -12,7 +12,7 @@ interface Store {
 }
 
 // Fetch central backoffice stores from Core API
-const { data: storesResponse, refresh: refreshStores } = await useFetch<any>('http://localhost:8000/api/admin/stores');
+const { data: storesResponse, refresh: refreshStores } = await useFetch<any>('http://localhost:7031/api/admin/stores');
 
 const stores = computed<Store[]>(() => {
     if (!storesResponse.value) return [];
@@ -67,7 +67,7 @@ const handleCreateStore = async () => {
         else if (newStore.value.accentColor === 'red') hexColor = '#e11d48';
         else if (newStore.value.accentColor === 'blue') hexColor = '#2563eb';
 
-        await $fetch('http://localhost:8000/api/admin/stores', {
+        await $fetch('http://localhost:7031/api/admin/stores', {
             method: 'POST',
             body: {
                 name: newStore.value.name,
@@ -106,7 +106,7 @@ const handleCreateStore = async () => {
 
 const toggleStoreStatus = async (store: Store) => {
     try {
-        await $fetch(`http://localhost:8000/api/admin/stores/${store.id}/toggle`, {
+        await $fetch(`http://localhost:7031/api/admin/stores/${store.id}/toggle`, {
             method: 'POST',
         });
         await refreshStores();
@@ -136,7 +136,7 @@ const securityStatusType = ref<'success' | 'error' | ''>('');
 const handleSendResetEmail = async () => {
     try {
         securityStatusMsg.value = '';
-        await $fetch('http://localhost:8000/api/auth/password/email', {
+        await $fetch('http://localhost:7031/api/auth/password/email', {
             method: 'POST',
             body: { email: securityEmail.value }
         });
@@ -151,7 +151,7 @@ const handleSendResetEmail = async () => {
 const handleResetPassword = async () => {
     try {
         securityStatusMsg.value = '';
-        await $fetch('http://localhost:8000/api/auth/password/reset', {
+        await $fetch('http://localhost:7031/api/auth/password/reset', {
             method: 'POST',
             body: {
                 email: securityEmail.value,
@@ -174,7 +174,7 @@ const handleResetPassword = async () => {
 const handleSendVerifyEmail = async () => {
     try {
         securityStatusMsg.value = '';
-        await $fetch('http://localhost:8000/api/auth/email/send-verification', {
+        await $fetch('http://localhost:7031/api/auth/email/send-verification', {
             method: 'POST',
             body: { email: securityEmail.value }
         });
@@ -189,7 +189,7 @@ const handleSendVerifyEmail = async () => {
 const handleVerifyEmailDirect = async () => {
     try {
         securityStatusMsg.value = '';
-        await $fetch('http://localhost:8000/api/auth/email/verify', {
+        await $fetch('http://localhost:7031/api/auth/email/verify', {
             method: 'POST',
             body: { email: securityEmail.value }
         });
