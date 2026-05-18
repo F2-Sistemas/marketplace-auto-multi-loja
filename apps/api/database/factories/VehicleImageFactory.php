@@ -36,9 +36,9 @@ class VehicleImageFactory extends Factory
 
         return [
             'vehicle_id' => Vehicle::inRandomOrder()->first() ?? Vehicle::factory(),
-            'image_url' => $this->faker->randomElement($images),
+            'path' => $this->faker->randomElement($images),
             'is_featured' => $this->faker->boolean(25), // 25% chance of being featured
-            'display_order' => $this->faker->numberBetween(0, 10),
+            'order' => $this->faker->numberBetween(0, 10),
         ];
     }
 }

@@ -53,6 +53,31 @@ class VehicleImage extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'image_url',
+    ];
+
+    /**
+     * Get the full URL for the image.
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->path)) {
+            return 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop';
+        }
+
+        if (filter_var($this->path, FILTER_VALIDATE_URL)) {
+            return $this->path;
+        }
+
+        return \Storage::disk('s3-uploads')->url($this->path);
+    }
+
+    /**
      * Get the vehicle that owns this image.
      */
     public function vehicle(): BelongsTo
