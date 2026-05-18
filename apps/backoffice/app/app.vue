@@ -15,8 +15,14 @@ interface Store {
 const { data: storesResponse, refresh: refreshStores } = await useFetch<any>('http://localhost:8000/api/admin/stores');
 
 const stores = computed<Store[]>(() => {
-    if (!storesResponse.value || !storesResponse.value.data) return [];
-    return storesResponse.value.data.map((s: any) => {
+    if (!storesResponse.value) return [];
+    
+    // Support both direct array response and wrapped data property
+    const rawList = Array.isArray(storesResponse.value) 
+        ? storesResponse.value 
+        : (storesResponse.value.data || []);
+
+    return rawList.map((s: any) => {
         // Map theme accent colors to readable names
         let accentName = 'indigo';
         const color = s.settings?.accent_color || '';
@@ -24,14 +30,20 @@ const stores = computed<Store[]>(() => {
         else if (color === '#e11d48' || color === 'red') accentName = 'red';
         else if (color === '#2563eb' || color === 'blue') accentName = 'blue';
 
+        // Check if the store is primary verified and active
+        const domainObj = s.domains && s.domains.length > 0 
+            ? s.domains.find((d: any) => d.is_primary) 
+            : null;
+        const resolvedDomain = domainObj ? domainObj.domain : `${s.slug}.rederevenda.com`;
+
         return {
             id: s.id,
             name: s.name,
-            host: s.domain || `${s.slug}.rederevenda.com`,
+            host: resolvedDomain,
             plan: s.settings?.plan || 'mensal',
-            status: s.is_active ? 'ativo' : 'inativo',
+            status: s.status === 'active' ? 'ativo' : 'inativo',
             accentColor: accentName,
-            created_at: s.created_at ? s.created_at.split('T')[0] : '2026-05-18',
+            created_at: s.created_at ? s.created_at.split(' ')[0].split('T')[0] : '2026-05-18',
         };
     });
 });

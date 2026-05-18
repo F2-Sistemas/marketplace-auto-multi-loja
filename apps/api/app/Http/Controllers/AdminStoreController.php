@@ -57,9 +57,41 @@ class AdminStoreController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Support both flat format and nested settings format
+        $subdomain = $request->input('subdomain');
+        if (empty($subdomain)) {
+            $subdomain = $request->input('slug');
+        }
+        if (empty($subdomain) && $request->input('domain')) {
+            $subdomain = str_replace('.rederevenda.com', '', $request->input('domain'));
+        }
+
+        $whatsappNumber = $request->input('whatsapp_number');
+        if (empty($whatsappNumber) && $request->has('settings.whatsapp_number')) {
+            $whatsappNumber = $request->input('settings.whatsapp_number');
+        }
+
+        $accentColor = $request->input('accent_color');
+        if (empty($accentColor) && $request->has('settings.accent_color')) {
+            $accentColor = $request->input('settings.accent_color');
+        }
+
+        $plan = $request->input('plan');
+        if (empty($plan) && $request->has('settings.plan')) {
+            $plan = $request->input('settings.plan');
+        }
+
+        // Merge back into request so validator passes
+        $request->merge([
+            'subdomain' => $subdomain,
+            'whatsapp_number' => $whatsappNumber,
+            'accent_color' => $accentColor,
+            'plan' => $plan
+        ]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:255|unique:store_domains,domain',
+            'subdomain' => 'required|string|max:255',
             'whatsapp_number' => 'nullable|string|max:255',
             'accent_color' => 'nullable|string|max:255',
             'plan' => 'nullable|string|max:255',
