@@ -1,36 +1,43 @@
-# Status de Implementação - Refatoração de UI/UX
+# Relatório de Implementação: UI/UX Refactor (`implement-ui.md`)
 
-Este documento apresenta a análise comparativa entre as solicitações do plano original `tasks/chats/implement-ui.md` e o estado atual da implementação no repositório.
-
----
-
-## 🎯 Resumo de Conformidade
-
-| Área / Regra | Requisito Original | Status | Observações / Detalhes de Implementação |
-| :--- | :--- | :---: | :--- |
-| **Geral** | Seguir o design system específico por app | **100% OK** | Arquivos `design.json` e `design.md` foram lidos e aplicados estritamente em cada app. |
-| **Geral** | Não misturar regras visuais entre os apps | **100% OK** | Portal (Light Mode), Backoffice (Dark Glassmorphism) e Storefront (Multi-tema dinâmico). |
-| **Geral** | Nuxt 4, Vue 3, TS, Tailwind v4 e i18n | **100% OK** | Estruturas atualizadas e configuradas. |
-| **Portal** | Interface comercial, limpa, responsiva | **100% OK** | Cards modernos, grid de comparação rápida e espaçamento harmonioso. |
-| **Portal** | Sem visual do tipo "painel admin" | **100% OK** | Uso de cores claras e minimalistas. |
-| **Portal** | Filtros ativos em chips removíveis | **100% OK** | Implementados abaixo do cabeçalho da busca. |
-| **Portal** | Paginação no lugar de scroll infinito | **100% OK** | Componente `UiPagination.vue` integrado na listagem. |
-| **Storefront** | Foco em uma única loja parceira | **100% OK** | Sem veículos de terceiros. Layout isolado e customizado. |
-| **Storefront** | Respeitar identidade visual do tenant | **100% OK** | Cores primárias/secundárias, logos, taglines e botões computados dinamicamente via `/api/tenant`. |
-| **Storefront** | Reforço de confiança e conversão | **100% OK** |CTAs destacados de telefone, endereço e formulário de leads para WhatsApp. |
-| **Storefront** | Correção de SSR na tela de detalhes | **100% OK** | Eliminados crashes de compilação causados por propriedades nulas de quilometragem e destruição de arrays. |
-| **Backoffice** | Interface densa e otimizada | **100% OK** | Layout moderno de dashboard profissional em alta produtividade. |
-| **Backoffice** | Painel interativo de Segurança & E-mails | **100% OK** | Nova aba criada com links de monitoramento do Mailbox local (:8025) e do S3 Console (:9001). |
-| **Backoffice** | Formulário de teste SMTP e Senha | **100% OK** | Redefinição e validação de e-mails integrada à API do Redis/SMTP. |
+Este relatório audita em detalhes o que foi planejado no arquivo [implement-ui.md](file:///projects/tiago/marketplace-multi-loja-automoveis/tasks/chats/implement-ui.md) em comparação com o estado atual do ecossistema de aplicações front-end e backend.
 
 ---
 
-## 🛠️ O que está sendo refinado agora (Sprint Atual)
+## 🟢 1. Totalmente Implementado (100%)
 
-Para ir além do plano e satisfazer os requisitos do item **#19** e **#21** de `detalhamento-inicial-do-projeto.md`:
-- **Payload Semântico Completo**: Substituição dos filtros GET simples por envio de requisições POST contendo o payload estruturado (Busca textual, Filtros agrupados, Localização com Abrangência por raio/estado e Ordenação dinâmica).
-- **UX Recomendada de Localização**: Menu suspenso para abrangência espacial:
-  - "Somente esta cidade" (Filtro por `city_id`).
-  - "Até 50 / 100 / 150 km" (Cálculo dinâmico usando fórmula Haversine no PostgreSQL a partir das coordenadas da cidade selecionada).
-  - "Todo o estado" (Filtro por `state_id`).
-- **Animações de Carregamento**: Injeção de Shimmer Skeletons modernos durante o estado `pending` do carregamento de dados.
+### 💻 API Laravel Core & Integração
+- **Isolamento de Tenants**: Middleware `ResolveTenant` resolve dinamicamente o domínio ou `X-Store-Host` e injeta a marca, cores, coordenadas de HSL e detalhes no cabeçalho das requisições.
+- **Busca Semântica Completa**: Endpoint `POST /api/vehicles/search` com suporte a payload aninhado, ordenação dinâmica nativa, paginação e geolocalização por raio geoespacial (Haversine).
+- **KPI Dashboards com Revalidação e Cache**: Endpoint `GET /api/admin/stats` com cache de 15 minutos e limpeza dinâmica por botão discreto revalidado via query `?refresh=true`.
+- **Central de Help Desk & Timeline de Ocorrências**: CRUD de chamados de suporte técnico (`SupportTicketController`) para lojistas e administradores centrais, incluindo histórico em linha do tempo das ações de prioridade, classificação por categorias e pontuação do suporte.
+- **Ações Rápidas no Anúncio**: Hook de mudança de status (`VehicleController@updateStatus`) para desativação, ocultação, pausa ou exclusão direta por modal no painel do lojista.
+- **Mecanismo de Favoritos**: Endpoints eficientes de toggle e recuperação dos favoritos vinculados a fotos primárias.
+
+### 🌐 apps/portal (Marketplace Público)
+- **Visual Clean, Moderno & Responsivo**: Design em tom claro refinado, utilizando a tipografia premium **Outfit/Inter**, com cartões fluidos e sombras discretas.
+- **Filtros Avançados e Chips**: Implementação do `VehicleFilters.vue` integrado a marcas e estados dinâmicos com fichas removíveis (`ActiveFilterChips.vue`) e sliders de distância.
+- **Formulário de Proposta Premium**: Captura leads de vendas integrados diretamente ao banco de dados com tratamento instantâneo de erros e feedback.
+- **Resolução de SSR e Redirecionamentos**: O fluxo de rotas e links foi completamente sanado, impedindo loops infinitos para `/admin`.
+
+### 🌐 apps/storefront (Site da Concessionária)
+- **Multi-Tenancy Dinâmico**: Customização visual em tempo real (injeção dinâmica de cores de botões, logotipos, gradientes, banners e rodapés baseados no HSL do tenant retornado pela API).
+- **Estoque Exclusivo**: Filtragem estrita de anúncios para a unidade ativa, garantindo isolamento total contra outras concessionárias.
+- **Lead / WhatsApp Click**: Integração rápida e conversão de propostas com redirecionamento ao WhatsApp oficial configurado da concessionária.
+- **Resolução de Erros de Renderização**: Sanados problemas de SSR e formatação de quilometragem (`mileage`) no visualizador de veículo.
+
+### 🌐 apps/backoffice (Painel Administrativo)
+- **Painel Interativo de Estatísticas**: Exibição em tempo real de KPIs de faturamento, concessionárias e leads ativos, com controle do botão de recarga e cache de revalidação.
+- **CRUD e Wizard de Concessionárias**: Adição de concessionárias em tempo de execução com configurações visuais instantâneas e domínios customizados.
+- **Controle Técnico e "Segurança & E-mails"**: Cards dinâmicos e formulários elegantes com bordas delicadas integrados ao SMTP de homologação local para testes de redefinição de senha e verificação de e-mails.
+
+---
+
+## 🟡 2. Em Andamento / Parcialmente Implementado
+- **Diferenciação de Visores Móveis**: Os filtros da página de listagem de veículos já são totalmente responsivos, com chips elegantes. Apenas a gaveta tipo *bottom sheet* completa para telas muito pequenas no Portal está em refinamento progressivo.
+- **i18n total**: Todas as palavras e strings essenciais no fluxo de usuário já estão extraídas para arquivos JSON (`pt-BR`). Strings administrativas internas do Backoffice estão em transição incremental contínua.
+
+---
+
+## 🔴 3. Não Iniciado / Fora de Escopo do MVP
+- **Comparação direta Lado a Lado (Visual)**: A infraestrutura do backend está 100% pronta para alimentar payloads de comparação, porém o comparador gráfico estrito com tabela comparativa visual lado-a-lado foi postergado para a fase pós-MVP por prioridade de negócio.
