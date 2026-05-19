@@ -19,7 +19,7 @@ class VehicleSearchService
     public function search(array $filters): LengthAwarePaginator
     {
         $query = Vehicle::query()
-            ->with(['brand', 'model', 'city.state', 'images' => function ($q) {
+            ->with(['brand', 'model', 'city.state', 'store', 'images' => function ($q) {
                 $q->orderBy('order', 'asc');
             }])
             ->where('vehicles.status', '=', $filters['status'] ?? 'published');
