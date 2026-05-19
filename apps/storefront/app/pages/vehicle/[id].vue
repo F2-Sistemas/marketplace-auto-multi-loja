@@ -11,7 +11,7 @@ import UiButton from '~/components/ui/UiButton.vue';
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
-const { currentStore, vehicles, formatPrice } = useTenant();
+const { currentStore, filteredVehicles: vehicles, formatPrice } = useTenant();
 
 const vehicleId = computed(() => Number(route.params.id));
 const vehicle = computed(() => vehicles.value.find(v => v.id === vehicleId.value));
