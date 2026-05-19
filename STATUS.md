@@ -64,17 +64,21 @@ Este arquivo consolida todas as atividades já concluídas, a arquitetura atual 
 
 ---
 
-## 🛠️ O que está em andamento (Sprint Atual)
+## 🚀 O que já foi realizado (Concluído - Continuação)
 
-Estamos implementando melhorias de busca avançada baseadas na especificação oficial do projeto:
-1. **Busca Semântica por Payload**: Novo endpoint `POST /api/vehicles/search` e atualização no `VehicleSearchService` para processar payloads no formato JSON semântico (busca textual, filtros estruturados, localização complexa, paginação e ordenação).
+### 🔍 Busca Avançada & Geolocalização Geoespacial
+1. **Busca Semântica por Payload**: Criado o endpoint `POST /api/vehicles/search` e implementado o `VehicleSearchService` para analisar recursivamente o payload JSON aninhado (termo textual, filtros de checkbox, localização complexa, ordenação direta SQL e paginação nativa).
 2. **Filtros de Localização Flexíveis**:
-   - `"Somente esta cidade"` (Filtro simples por cidade).
-   - `"Cidade e região próxima (Raio de 50km, 100km, 150km)"` (Cálculo dinâmico usando fórmula Haversine no PostgreSQL resolvendo coordenadas de cidades a partir da base).
-   - `"Todo o estado"` (Filtro abrangente por estado).
-3. **Ordenação no Banco de Dados**: Ajuste do fluxo de pesquisa e filtros do portal para ordenar veículos no banco de dados via campo `sort` do payload (como preço, data de criação e quilometragem).
-4. **Shimmer Skeletons**: Adição de feedback visual dinâmico com shimmers modernos no grid de veículos durante o carregamento de novas buscas no portal.
-5. **Suíte de Testes Adicionais**: Validação do novo serviço com `VehicleSearchPayloadTest.php`.
+   - `"Somente esta cidade"` (Filtro simples por cidade via `city_id`).
+   - `"Cidade e região próxima (Raio de 50km, 100km, 150km)"` (Cálculo matemático dinâmico via Haversine no PostgreSQL usando coordenadas lat/lng da base com fallback automático se coordenadas não enviadas).
+   - `"Todo o estado"` (Escopo abrangente de estado via `state_id`).
+3. **Ordenação Dinâmica Integrada**: Integrados filtros de ordenação do portal diretamente nas consultas do banco de dados (por preço asc/desc, data de criação/relevância e ano mais recente).
+4. **Interface Dinâmica & Filtros em Checklist**:
+   - Refatorado `VehicleFilters.vue` para buscar marcas, estados e cidades de forma assíncrona da API.
+   - Adicionados seletores dinâmicos condicionais de região e checklists completos para múltiplos tipos de câmbio e combustíveis.
+   - **ActiveFilterChips.vue**: Chips ativos exibindo nomes legíveis de marcas com base em lookup dinâmico.
+5. **Shimmer Skeletons**: Adicionados shimmers dinâmicos e fluidos em `VehicleGrid.vue` enquanto o status de carregamento `pending` está ativo no composable.
+6. **Suíte de Testes Avançada**: Criados testes automatizados em `VehicleSearchPayloadTest.php` cobrindo 30 casos de asserção (todos os testes com **100% de sucesso**).
 
 ---
 
