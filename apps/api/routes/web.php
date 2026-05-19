@@ -18,7 +18,21 @@ Route::get('/api/tenant', [TenantController::class, 'show']);
 
 // Public Vehicles Endpoints
 Route::get('/api/vehicles', [VehicleController::class, 'index']);
+Route::post('/api/vehicles/search', [VehicleController::class, 'search']);
 Route::get('/api/vehicles/{id}', [VehicleController::class, 'show']);
+
+// Auxiliary Helpers for Filters
+Route::get('/api/brands', function () {
+    return response()->json(\App\Models\Brand::orderBy('name', 'asc')->get());
+});
+
+Route::get('/api/states', function () {
+    return response()->json(\App\Models\State::orderBy('name', 'asc')->get());
+});
+
+Route::get('/api/cities', function () {
+    return response()->json(\App\Models\City::with('state')->orderBy('name', 'asc')->get());
+});
 
 // Client Lead Submission
 Route::post('/api/leads', [LeadController::class, 'store']);

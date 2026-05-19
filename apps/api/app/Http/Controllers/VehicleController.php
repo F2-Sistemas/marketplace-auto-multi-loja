@@ -48,6 +48,17 @@ class VehicleController extends Controller
     }
 
     /**
+     * Search vehicles with standard semantic payload.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $payload = $request->all();
+        $paginator = $this->searchService->search($payload);
+
+        return response()->json($paginator);
+    }
+
+    /**
      * Show vehicle details.
      */
     public function show(int $id): JsonResponse
