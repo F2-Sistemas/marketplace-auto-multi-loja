@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useVehicles } from '~/composables/useVehicles';
 import { useI18n } from '~/composables/useI18n';
 
@@ -10,10 +10,19 @@ const {
   maxPrice,
   selectedTransmission,
   resetFilters,
-  stores
+  stores,
+  fetchBrands
 } = useVehicles();
 
 const { t } = useI18n();
+
+const brandsList = ref<{ id: number; name: string }[]>([]);
+
+onMounted(async () => {
+  try {
+    brandsList.value = await fetchBrands();
+  } catch (err) {}
+});
 
 const activeChips = computed(() => {
   const list: { key: string; label: string; action: () => void }[] = [];
@@ -27,9 +36,10 @@ const activeChips = computed(() => {
   }
   
   if (selectedBrand.value) {
+    const brandObj = brandsList.value.find(b => String(b.id) === selectedBrand.value);
     list.push({
       key: 'brand',
-      label: selectedBrand.value,
+      label: brandObj ? brandObj.name : selectedBrand.value,
       action: () => { selectedBrand.value = ''; }
     });
   }

@@ -18,7 +18,8 @@ const { t } = useI18n();
         :options="[
           { label: t('search.sortNewest'), value: 'newest' },
           { label: t('search.sortPriceAsc'), value: 'price_asc' },
-          { label: t('search.sortPriceDesc'), value: 'price_desc' }
+          { label: t('search.sortPriceDesc'), value: 'price_desc' },
+          { label: 'Ano mais recente', value: 'year_desc' }
         ]"
         id="sort-select"
       />

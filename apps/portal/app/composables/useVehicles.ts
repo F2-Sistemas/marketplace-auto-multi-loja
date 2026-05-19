@@ -28,57 +28,181 @@ export interface Store {
   slug: string;
 }
 
-// Global shared states to preserve choices during routing
-const search = ref('');
-const selectedBrand = ref('');
-const selectedStore = ref('');
-const maxPrice = ref(250000);
-const selectedTransmission = ref('');
-const sortBy = ref('relevance');
-const currentPage = ref(1);
-const itemsPerPage = ref(6);
+// Advanced semantic search state structure
+export interface SearchPayload {
+  search: {
+    term: string;
+  };
+  location: {
+    mode: 'city' | 'state' | 'radius' | 'all';
+    city_id: number | null;
+    state_id: number | null;
+    radius_km: number | null;
+  };
+  filters: {
+    brand_id: number | null;
+    model_id: number | null;
+    price: {
+      min: number | null;
+      max: number | null;
+    };
+    year: {
+      min: number | null;
+      max: number | null;
+    };
+    mileage: {
+      max: number | null;
+    };
+    transmission: string[];
+    fuel: string[];
+    body_type: string[];
+  };
+  sort: {
+    field: string;
+    direction: 'asc' | 'desc';
+  };
+  pagination: {
+    page: number;
+    per_page: number;
+  };
+  store_id?: number | null;
+}
 
-const brands = ['Toyota', 'Honda', 'Jeep', 'BMW', 'Volkswagen'];
+const initialPayload = (): SearchPayload => ({
+  search: {
+    term: '',
+  },
+  location: {
+    mode: 'all',
+    city_id: null,
+    state_id: null,
+    radius_km: null,
+  },
+  filters: {
+    brand_id: null,
+    model_id: null,
+    price: {
+      min: null,
+      max: null,
+    },
+    year: {
+      min: null,
+      max: null,
+    },
+    mileage: {
+      max: null,
+    },
+    transmission: [],
+    fuel: [],
+    body_type: [],
+  },
+  sort: {
+    field: 'created_at',
+    direction: 'desc',
+  },
+  pagination: {
+    page: 1,
+    per_page: 6,
+  }
+});
+
+const searchPayload = ref<SearchPayload>(initialPayload());
+const selectedStore = ref('');
 
 export const useVehicles = () => {
   const { getApiUrl } = useApi();
 
-  // Core Inventory Fetching with custom key to deduplicate calls and fix hydration mismatch
-  const { data: apiResponse, pending, error } = useAsyncData<any>('vehicles-catalog-key', () => {
-    const params: any = {};
-    
-    let queryText = search.value.trim();
-    if (selectedBrand.value) {
-      queryText = queryText ? `${queryText} ${selectedBrand.value}` : selectedBrand.value;
+  // Backward compatibility properties using computed getters/setters mapping to searchPayload
+  const search = computed({
+    get: () => searchPayload.value.search.term,
+    set: (val) => {
+      searchPayload.value.search.term = val;
+      searchPayload.value.pagination.page = 1;
     }
-    
-    if (queryText) {
-      params.q = queryText;
+  });
+
+  const selectedBrand = computed({
+    get: () => searchPayload.value.filters.brand_id ? String(searchPayload.value.filters.brand_id) : '',
+    set: (val) => {
+      searchPayload.value.filters.brand_id = val ? Number(val) : null;
+      searchPayload.value.filters.model_id = null; // Reset model on brand change
+      searchPayload.value.pagination.page = 1;
     }
-    
-    if (maxPrice.value && maxPrice.value < 250000) {
-      params.price_max = maxPrice.value;
+  });
+
+  const selectedTransmission = computed({
+    get: () => searchPayload.value.filters.transmission.length > 0 ? searchPayload.value.filters.transmission[0] : '',
+    set: (val) => {
+      searchPayload.value.filters.transmission = val ? [val] : [];
+      searchPayload.value.pagination.page = 1;
     }
-    
-    if (selectedTransmission.value) {
-      params.transmission = selectedTransmission.value;
+  });
+
+  const maxPrice = computed({
+    get: () => searchPayload.value.filters.price.max ?? 250000,
+    set: (val) => {
+      searchPayload.value.filters.price.max = val >= 250000 ? null : val;
+      searchPayload.value.pagination.page = 1;
     }
-    
+  });
+
+  const sortBy = computed({
+    get: () => {
+      const f = searchPayload.value.sort.field;
+      const d = searchPayload.value.sort.direction;
+      if (f === 'price' && d === 'asc') return 'price_asc';
+      if (f === 'price' && d === 'desc') return 'price_desc';
+      if (f === 'year' && d === 'desc') return 'year_desc';
+      return 'newest';
+    },
+    set: (val) => {
+      if (val === 'price_asc') {
+        searchPayload.value.sort = { field: 'price', direction: 'asc' };
+      } else if (val === 'price_desc') {
+        searchPayload.value.sort = { field: 'price', direction: 'desc' };
+      } else if (val === 'year_desc') {
+        searchPayload.value.sort = { field: 'year', direction: 'desc' };
+      } else {
+        searchPayload.value.sort = { field: 'created_at', direction: 'desc' };
+      }
+      searchPayload.value.pagination.page = 1;
+    }
+  });
+
+  const currentPage = computed({
+    get: () => searchPayload.value.pagination.page,
+    set: (val) => {
+      searchPayload.value.pagination.page = val;
+    }
+  });
+
+  const itemsPerPage = computed({
+    get: () => searchPayload.value.pagination.per_page,
+    set: (val) => {
+      searchPayload.value.pagination.per_page = val;
+      searchPayload.value.pagination.page = 1;
+    }
+  });
+
+  // Fetch from the advanced search endpoint using POST and the semantic payload body
+  const { data: apiResponse, pending, error, refresh } = useAsyncData<any>('vehicles-catalog-key', () => {
     const headers: any = {};
     if (selectedStore.value) {
       headers['X-Store-Host'] = `${selectedStore.value}.rederevenda.com`;
     }
 
-    return $fetch(getApiUrl('/api/vehicles'), {
-      query: params,
+    return $fetch(getApiUrl('/api/vehicles/search'), {
+      method: 'POST',
+      body: searchPayload.value,
       headers
     });
   }, {
-    watch: [search, selectedBrand, selectedStore, selectedTransmission, maxPrice],
+    watch: [searchPayload, selectedStore],
+    deep: true
   });
 
-  // Convert raw API schema into clean consistent client format matching the aligned Vehicle interface
-  const allVehicles = computed<Vehicle[]>(() => {
+  // Client conversion mapper
+  const vehicles = computed<Vehicle[]>(() => {
     if (!apiResponse.value || !apiResponse.value.data) return [];
     return apiResponse.value.data.map((v: any) => ({
       id: v.id,
@@ -106,48 +230,17 @@ export const useVehicles = () => {
     }));
   });
 
-  // Sort and process catalog list
-  const processedVehicles = computed<Vehicle[]>(() => {
-    let list = [...allVehicles.value];
-    
-    if (sortBy.value === 'priceAsc') {
-      list.sort((a, b) => a.price - b.price);
-    } else if (sortBy.value === 'priceDesc') {
-      list.sort((a, b) => b.price - a.price);
-    } else if (sortBy.value === 'yearDesc') {
-      list.sort((a, b) => (b.year_model || 0) - (a.year_model || 0));
-    }
-    
-    return list;
-  });
-
-  const totalResults = computed(() => processedVehicles.value.length);
-  const totalPages = computed(() => Math.ceil(totalResults.value / itemsPerPage.value) || 1);
-
-  // Paginated active grid window
-  const paginatedVehicles = computed<Vehicle[]>(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return processedVehicles.value.slice(start, end);
-  });
-
-  // Automatically reset page when query filters alter
-  watch([search, selectedBrand, selectedStore, selectedTransmission, maxPrice], () => {
-    currentPage.value = 1;
-  });
+  // Server-driven pagination metadata
+  const totalResults = computed(() => apiResponse.value?.total || 0);
+  const totalPages = computed(() => apiResponse.value?.last_page || 1);
 
   const resetFilters = () => {
-    search.value = '';
-    selectedBrand.value = '';
+    searchPayload.value = initialPayload();
     selectedStore.value = '';
-    maxPrice.value = 250000;
-    selectedTransmission.value = '';
-    sortBy.value = 'relevance';
-    currentPage.value = 1;
   };
 
   const getVehicleById = (id: number | string): Vehicle | null => {
-    return allVehicles.value.find(v => v.id === Number(id)) || null;
+    return vehicles.value.find(v => v.id === Number(id)) || null;
   };
 
   const sendLead = async (leadData: {
@@ -163,9 +256,22 @@ export const useVehicles = () => {
     });
   };
 
+  // Helper dynamic catalog lookup API calls
+  const fetchBrands = async (): Promise<any[]> => {
+    return $fetch(getApiUrl('/api/brands'));
+  };
+
+  const fetchStates = async (): Promise<any[]> => {
+    return $fetch(getApiUrl('/api/states'));
+  };
+
+  const fetchCities = async (): Promise<any[]> => {
+    return $fetch(getApiUrl('/api/cities'));
+  };
+
   const stores = computed(() => {
     const map = new Map();
-    allVehicles.value.forEach(v => {
+    vehicles.value.forEach(v => {
       if (v.store?.slug && !map.has(v.store.slug)) {
         map.set(v.store.slug, {
           name: v.store.name,
@@ -186,6 +292,7 @@ export const useVehicles = () => {
   });
 
   return {
+    searchPayload,
     search,
     selectedBrand,
     selectedStore,
@@ -194,19 +301,23 @@ export const useVehicles = () => {
     sortBy,
     currentPage,
     itemsPerPage,
-    brands,
     stores,
     
     pending,
     error,
     totalResults,
     totalPages,
-    vehicles: paginatedVehicles,
-    allVehicles,
+    vehicles,
+    allVehicles: vehicles,
     
     resetFilters,
     getVehicleById,
     sendLead,
-    postLead: sendLead
+    postLead: sendLead,
+
+    // Dropdown fetching
+    fetchBrands,
+    fetchStates,
+    fetchCities,
   };
 };
