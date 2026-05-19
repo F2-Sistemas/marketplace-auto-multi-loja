@@ -20,14 +20,14 @@ class StoreSeeder extends Seeder
                 'name' => 'AutoCar Natal',
                 'slug' => 'autocar-natal',
                 'status' => 'active',
-                'domain' => 'autocar-natal.app-loja.rederevenda.com',
+                'domain' => 's1.app-loja.rederevenda.com',
             ],
             [
                 'public_id' => 'sp-veiculos',
                 'name' => 'São Paulo Veículos',
                 'slug' => 'sp-veiculos',
                 'status' => 'active',
-                'domain' => 'sp-veiculos.app-loja.rederevenda.com',
+                'domain' => 'sp-veiculos.rederevenda.com',
             ],
             [
                 'public_id' => 'loja01',

@@ -75,4 +75,33 @@ class VehicleController extends Controller
 
         return response()->json($vehicle);
     }
+
+    /**
+     * Update vehicle status (lojista storefront panel quick actions).
+     */
+    public function updateStatus(Request $request, int $id): JsonResponse
+    {
+        $status = $request->input('status');
+        if (!in_array($status, ['active', 'paused', 'hidden', 'sold', 'deleted', 'inactive'])) {
+            return response()->json(['message' => 'Status inválido.'], 422);
+        }
+
+        $vehicle = \App\Models\Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json(['message' => 'Veículo não encontrado.'], 404);
+        }
+
+        if ($status === 'deleted') {
+            $vehicle->delete();
+            return response()->json(['message' => 'Veículo excluído com sucesso!']);
+        }
+
+        $vehicle->status = $status;
+        $vehicle->save();
+
+        return response()->json([
+            'message' => 'Status do veículo atualizado com sucesso!',
+            'status' => $status
+        ]);
+    }
 }

@@ -6,6 +6,10 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminStatsController;
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\FavoriteController;
 
 Route::get('/', fn () => response()->json([
     'app' => 'AutoHub API Core',
@@ -41,6 +45,30 @@ Route::post('/api/leads', [LeadController::class, 'store']);
 Route::get('/api/admin/stores', [AdminStoreController::class, 'index']);
 Route::post('/api/admin/stores', [AdminStoreController::class, 'store']);
 Route::post('/api/admin/stores/{id}/toggle', [AdminStoreController::class, 'toggle']);
+Route::get('/api/admin/stats', [AdminStatsController::class, 'index']);
+
+// Central Admin Help Desk support tickets
+Route::get('/api/admin/tickets', [SupportTicketController::class, 'adminIndex']);
+Route::post('/api/admin/tickets/{id}/reply', [SupportTicketController::class, 'adminReply']);
+Route::post('/api/admin/tickets/{id}/category', [SupportTicketController::class, 'updateCategory']);
+
+// Storefront & Lojista Support Tickets
+Route::get('/api/store/tickets', [SupportTicketController::class, 'storeIndex']);
+Route::post('/api/store/tickets', [SupportTicketController::class, 'storeCreate']);
+Route::get('/api/store/tickets/{id}', [SupportTicketController::class, 'show']);
+Route::post('/api/store/tickets/{id}/reply', [SupportTicketController::class, 'storeReply']);
+Route::post('/api/store/tickets/{id}/close', [SupportTicketController::class, 'close']);
+Route::post('/api/store/tickets/{id}/rate', [SupportTicketController::class, 'rate']);
+Route::post('/api/store/tickets/{id}/reopen', [SupportTicketController::class, 'reopen']);
+
+// Storefront Subscription billing and theme custom styling
+Route::get('/api/store/billing', [SubscriptionController::class, 'billingInfo']);
+Route::post('/api/store/settings/theme', [SubscriptionController::class, 'updateTheme']);
+Route::post('/api/store/vehicles/{id}/status', [VehicleController::class, 'updateStatus']);
+
+// Customer Favoriting Features
+Route::get('/api/favorites', [FavoriteController::class, 'index']);
+Route::post('/api/favorites/{vehicle_id}/toggle', [FavoriteController::class, 'toggle']);
 
 // Authentication, Password Recovery & Email Verification
 Route::post('/api/auth/password/email', [AuthController::class, 'sendResetLink']);
