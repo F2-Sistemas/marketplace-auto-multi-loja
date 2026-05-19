@@ -63,7 +63,7 @@ const goBack = () => {
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 border-t border-b border-slate-850 py-6">
               <div>
                 <span class="text-[10px] text-slate-500 block uppercase font-semibold">Quilometragem</span>
-                <span class="text-sm font-bold text-slate-200 mt-1 block">{{ vehicle.km.toLocaleString('pt-BR') }} km</span>
+                <span class="text-sm font-bold text-slate-200 mt-1 block">{{ vehicle.mileage.toLocaleString('pt-BR') }} km</span>
               </div>
               <div>
                 <span class="text-[10px] text-slate-500 block uppercase font-semibold">Câmbio</span>
