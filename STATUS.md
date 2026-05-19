@@ -32,7 +32,21 @@ Este arquivo consolida todas as atividades já concluídas, a arquitetura atual 
    - Adicionada a regra de exclusão CSRF em `bootstrap/app.php` para todas as rotas `/api/*`. Isso resolveu o erro fatal `419 CSRF Token Mismatch` durante propostas de leads e criação de lojas.
 9. **Cobertura Completa de Testes de Segurança**:
    - Suíte completa de testes automatizados criada em `tests/Feature/AuthSecurityTest.php`.
-   - **100% de sucesso nos testes automatizados** via PHPUnit (`OK (24 tests, 67 assertions)`).
+10. **Cache de Estatísticas KPI Centrais**:
+    - Endpoint `GET /api/admin/stats` trazendo dados reais consolidados de crescimento do ecossistema, com cache de 15 minutos e revalidação forçada via parâmetro de busca `?refresh=true`.
+11. **Help Desk & Canais de Atendimento (Suporte)**:
+    - Sistema completo de abertura e acompanhamento de chamados (tickets) por lojistas e atendimento pela administração central.
+    - Timeline interativa integrada registrando mudanças de status (`aberto`, `respondido`, `fechado`, `encerrado`), atualizações de prioridade, categorias e avaliações dos usuários (rating).
+12. **Customização Visual do Storefront & Histórico de Cobrança**:
+    - Gerenciamento de faturas (billing) com controle de status de pagamento, data de vencimento e links de download seguro das faturas em PDF.
+    - Armazenamento e entrega de configurações visuais customizadas (cor primária, modo escuro/claro, coordenadas HSL do tema da loja) para injeção em tempo de execução no frontend.
+13. **Painel de Controle Rápido do Estoque (Lojista)**:
+    - Endpoint de mudança rápida de status (`active`, `paused`, `hidden`, `sold`, `deleted`) no `VehicleController` para permitir controle ágil de anúncios a partir da interface do lojista.
+14. **Mecânica de Favoritos do Comprador**:
+    - Endpoints de listagem e alternância (toggle) de favoritos do comprador `/api/favorites`, com carregamento eficiente de imagens primárias do estoque.
+15. **Suíte Consolidada de Testes de Integração**:
+    - Suíte completa de testes em `AdvancedFeaturesTest.php` cobrindo 100% dos novos fluxos avançados com total assertividade.
+    - **100% de sucesso nos testes automatizados** via PHPUnit: `OK (33 tests, 126 assertions)`.
 
 ---
 
