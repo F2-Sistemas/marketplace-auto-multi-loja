@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useI18n } from '../composables/useI18n';
+import { useAuth } from '../composables/useAuth';
 
 const route = useRoute();
 const { t } = useI18n();
+const { user, logout } = useAuth();
+
+// Derive user initials for avatar
+const userInitials = computed(() => {
+    if (!user.value?.name) return '??';
+    return user.value.name
+        .split(' ')
+        .slice(0, 2)
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase();
+});
 
 const getHeaderTitle = () => {
     if (route.path === '/lojas') return t('headers.stores');
@@ -11,6 +24,7 @@ const getHeaderTitle = () => {
     if (route.path === '/seguranca') return t('headers.security');
     if (route.path === '/suporte') return t('headers.globalSupport');
     if (route.path === '/chamados') return t('headers.myTickets');
+    if (route.path.startsWith('/noticias')) return t('headers.noticias');
     return t('headers.dashboard');
 };
 </script>
@@ -88,6 +102,19 @@ const getHeaderTitle = () => {
                     </NuxtLink>
 
                     <NuxtLink
+                        to="/noticias"
+                        :class="[
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-normal transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50',
+                            route.path.startsWith('/noticias')
+                                ? 'bg-indigo-650/15 border border-indigo-500/30 text-indigo-300'
+                                : 'bg-transparent border border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-850',
+                        ]"
+                    >
+                        <iconify-icon icon="tabler:news" class="text-lg"></iconify-icon>
+                        <span>{{ t('navigation.noticias') }}</span>
+                    </NuxtLink>
+
+                    <NuxtLink
                         to="/seguranca"
                         :class="[
                             'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-normal transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/50',
@@ -148,14 +175,21 @@ const getHeaderTitle = () => {
             <div class="p-4 border-t border-slate-800 bg-slate-950/40">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 font-semibold text-sm"
+                        class="w-9 h-9 rounded-full bg-indigo-900/60 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-xs shrink-0"
                     >
-                        TS
+                        {{ userInitials }}
                     </div>
-                    <div>
-                        <span class="font-semibold text-xs text-white block">{{ t('adminName') }}</span>
-                        <span class="text-[10px] text-slate-500 block">{{ t('adminRole') }}</span>
+                    <div class="flex-1 min-w-0">
+                        <span class="font-semibold text-xs text-white block truncate">{{ user?.name || t('adminName') }}</span>
+                        <span class="text-[10px] text-slate-500 block truncate">{{ user?.email || t('adminRole') }}</span>
                     </div>
+                    <button
+                        @click="logout"
+                        title="Sair"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900 hover:bg-red-500/15 border border-slate-800 hover:border-red-500/40 text-slate-500 hover:text-red-400 transition-all duration-200 cursor-pointer shrink-0"
+                    >
+                        <iconify-icon icon="tabler:logout" class="text-base"></iconify-icon>
+                    </button>
                 </div>
             </div>
         </aside>

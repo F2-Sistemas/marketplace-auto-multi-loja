@@ -7,6 +7,9 @@ export default defineNuxtConfig({
         enabled: true,
     },
     css: ['~/assets/css/main.css'],
+    router: {
+        middleware: ['auth'],
+    },
     vue: {
         compilerOptions: {
             isCustomElement: (tag) => tag === 'iconify-icon',

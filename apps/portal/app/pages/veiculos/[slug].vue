@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useFetch } from '#app';
 import { useI18n } from '~/composables/useI18n';
 import Breadcrumb from '~/components/layout/Breadcrumb.vue';
@@ -55,6 +55,49 @@ const vehicle = computed(() => {
             : ['Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Travas Elétricas', 'Freio ABS', 'Airbag'],
     };
 });
+
+// Known special flag names
+const POSITIVE_FLAGS = [
+    'aceita_troca',
+    'desconto_troca_usado',
+    'aceita_ofertas',
+    'carro_blindado',
+    'vidros_blindados',
+    'gnv_glp',
+];
+const ALERT_FLAGS = [
+    'carro_sinistro',
+    'apenas_documentos_ok',
+];
+const FLAG_LABELS: Record<string, { label: string; icon: string; description?: string }> = {
+    aceita_troca:        { label: 'Aceita Troca',              icon: 'tabler:arrows-exchange-2' },
+    desconto_troca_usado:{ label: 'Desconto na Troca do Usado',icon: 'tabler:receipt-discount' },
+    aceita_ofertas:      { label: 'Aceita Ofertas',            icon: 'tabler:hand-money' },
+    carro_blindado:      { label: 'Carro Blindado',            icon: 'tabler:shield-check' },
+    vidros_blindados:    { label: 'Vidros Blindados',          icon: 'tabler:shield' },
+    gnv_glp:             { label: 'GNV / GLP',                 icon: 'tabler:gas-station' },
+    carro_sinistro:      { label: 'Veículo com Histórico de Sinistro', icon: 'tabler:alert-triangle', description: 'Este veículo possui registro de sinistro. Solicite o histórico detalhado.' },
+    apenas_documentos_ok:{ label: 'Apenas Documentação Ok',   icon: 'tabler:file-check',   description: 'Veículo com documentação regularizada. Verifique demais condições.' },
+};
+
+const positiveFlags = computed(() => {
+    if (!vehicle.value) return [];
+    return vehicle.value.features.filter((f: string) => POSITIVE_FLAGS.includes(f));
+});
+
+const alertFlags = computed(() => {
+    if (!vehicle.value) return [];
+    return vehicle.value.features.filter((f: string) => ALERT_FLAGS.includes(f));
+});
+
+const regularFeatures = computed(() => {
+    if (!vehicle.value) return [];
+    return vehicle.value.features.filter(
+        (f: string) => !POSITIVE_FLAGS.includes(f) && !ALERT_FLAGS.includes(f)
+    );
+});
+
+const showAlertAccordion = ref(false);
 const storefrontUrl = computed(() => {
     if (!vehicle.value || !vehicle.value.store_slug) return '';
     const slug = vehicle.value.store_slug;
@@ -146,14 +189,64 @@ const storefrontUrl = computed(() => {
                             <iconify-icon icon="tabler:list-details" class="text-brand-500"></iconify-icon>
                             <span>Itens de Série e Opcionais</span>
                         </h3>
-                        <div class="flex flex-wrap gap-2.5">
-                            <div
-                                v-for="feat in vehicle.features"
-                                :key="feat"
-                                class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 border border-neutral-200 text-xs font-semibold text-neutral-600 rounded-full"
+
+                        <!-- Positive Flags (commercial highlights) -->
+                        <div v-if="positiveFlags.length > 0" class="mb-3">
+                            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-2">Diferenciais</p>
+                            <div class="flex flex-wrap gap-2">
+                                <div
+                                    v-for="flag in positiveFlags"
+                                    :key="flag"
+                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700 rounded-full"
+                                >
+                                    <iconify-icon :icon="FLAG_LABELS[flag]?.icon || 'tabler:star'" class="text-emerald-500 text-sm"></iconify-icon>
+                                    <span>{{ FLAG_LABELS[flag]?.label || flag }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Regular equipment -->
+                        <div v-if="regularFeatures.length > 0">
+                            <p class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Equipamentos</p>
+                            <div class="flex flex-wrap gap-2.5">
+                                <div
+                                    v-for="feat in regularFeatures"
+                                    :key="feat"
+                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 border border-neutral-200 text-xs font-semibold text-neutral-600 rounded-full"
+                                >
+                                    <iconify-icon icon="tabler:circle-check" class="text-brand-500 text-sm"></iconify-icon>
+                                    <span>{{ feat }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alert Flags accordion -->
+                        <div v-if="alertFlags.length > 0" class="border border-amber-200 rounded-xl overflow-hidden">
+                            <button
+                                @click="showAlertAccordion = !showAlertAccordion"
+                                class="w-full flex items-center justify-between px-4 py-3 bg-amber-50 text-amber-700 text-sm font-semibold"
                             >
-                                <iconify-icon icon="tabler:circle-check" class="text-brand-500 text-sm"></iconify-icon>
-                                <span>{{ feat }}</span>
+                                <span class="flex items-center gap-2">
+                                    <iconify-icon icon="tabler:alert-triangle" class="text-amber-500"></iconify-icon>
+                                    Informações Adicionais ({{ alertFlags.length }})
+                                </span>
+                                <iconify-icon
+                                    :icon="showAlertAccordion ? 'tabler:chevron-up' : 'tabler:chevron-down'"
+                                    class="text-amber-500"
+                                ></iconify-icon>
+                            </button>
+                            <div v-if="showAlertAccordion" class="px-4 py-3 bg-amber-50/50 space-y-3">
+                                <div
+                                    v-for="flag in alertFlags"
+                                    :key="flag"
+                                    class="flex items-start gap-2"
+                                >
+                                    <iconify-icon :icon="FLAG_LABELS[flag]?.icon || 'tabler:info-circle'" class="text-amber-500 text-base mt-0.5 shrink-0"></iconify-icon>
+                                    <div>
+                                        <p class="text-xs font-bold text-amber-700">{{ FLAG_LABELS[flag]?.label || flag }}</p>
+                                        <p v-if="FLAG_LABELS[flag]?.description" class="text-xs text-amber-600 mt-0.5">{{ FLAG_LABELS[flag]?.description }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </UiCard>

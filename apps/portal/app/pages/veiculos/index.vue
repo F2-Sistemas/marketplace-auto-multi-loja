@@ -44,6 +44,18 @@ const parseAndValidateQuery = () => {
         searchPayload.value.search.term = '';
     }
 
+    // 1b. Type
+    if (query.type !== undefined) {
+        const typeStr = String(query.type);
+        if (typeStr === 'carros' || typeStr === 'motos') {
+            searchPayload.value.filters.type = typeStr;
+        } else {
+            searchPayload.value.filters.type = null;
+        }
+    } else {
+        searchPayload.value.filters.type = null;
+    }
+
     // 2. Brand
     if (query.brand !== undefined) {
         const brandId = Number(query.brand);
@@ -86,13 +98,61 @@ const parseAndValidateQuery = () => {
     // 6. Max Price
     if (query.price_max !== undefined) {
         const maxVal = Number(query.price_max);
-        if (!isNaN(maxVal) && maxVal >= 50000 && maxVal <= 250000) {
-            searchPayload.value.filters.price.max = maxVal >= 250000 ? null : maxVal;
+        if (!isNaN(maxVal) && maxVal >= 0) {
+            searchPayload.value.filters.price.max = maxVal;
         } else {
             searchPayload.value.filters.price.max = null;
         }
     } else {
         searchPayload.value.filters.price.max = null;
+    }
+
+    // 6b. Min Price
+    if (query.price_min !== undefined) {
+        const minVal = Number(query.price_min);
+        if (!isNaN(minVal) && minVal >= 0) {
+            searchPayload.value.filters.price.min = minVal;
+        } else {
+            searchPayload.value.filters.price.min = null;
+        }
+    } else {
+        searchPayload.value.filters.price.min = null;
+    }
+
+    // 6c. Min Year
+    if (query.year_min !== undefined) {
+        const yearVal = Number(query.year_min);
+        if (!isNaN(yearVal) && yearVal >= 1900) {
+            searchPayload.value.filters.year.min = yearVal;
+        } else {
+            searchPayload.value.filters.year.min = null;
+        }
+    } else {
+        searchPayload.value.filters.year.min = null;
+    }
+
+    // 6d. Max Year
+    if (query.year_max !== undefined) {
+        const yearVal = Number(query.year_max);
+        if (!isNaN(yearVal) && yearVal >= 1900) {
+            searchPayload.value.filters.year.max = yearVal;
+        } else {
+            searchPayload.value.filters.year.max = null;
+        }
+    } else {
+        searchPayload.value.filters.year.max = null;
+    }
+
+    // 6e. Mileage Max
+    if (query.mileage_max !== undefined) {
+        const kmVal = Number(query.mileage_max);
+        if (!isNaN(kmVal) && kmVal >= 0) {
+            searchPayload.value.filters.mileage.max = kmVal;
+        } else {
+            searchPayload.value.filters.mileage.max = null;
+        }
+    } else {
+        searchPayload.value.filters.mileage.max = null;
     }
 
     // 7. Location Mode and Radius
@@ -181,6 +241,9 @@ const buildQueryFromState = () => {
     if (searchPayload.value.search.term) {
         q.q = searchPayload.value.search.term;
     }
+    if (searchPayload.value.filters.type) {
+        q.type = searchPayload.value.filters.type;
+    }
     if (searchPayload.value.filters.brand_id) {
         q.brand = searchPayload.value.filters.brand_id;
     }
@@ -193,8 +256,20 @@ const buildQueryFromState = () => {
     if (searchPayload.value.filters.fuel.length > 0) {
         q.fuel = searchPayload.value.filters.fuel.join(',');
     }
+    if (searchPayload.value.filters.price.min !== null) {
+        q.price_min = searchPayload.value.filters.price.min;
+    }
     if (searchPayload.value.filters.price.max !== null) {
         q.price_max = searchPayload.value.filters.price.max;
+    }
+    if (searchPayload.value.filters.year.min !== null) {
+        q.year_min = searchPayload.value.filters.year.min;
+    }
+    if (searchPayload.value.filters.year.max !== null) {
+        q.year_max = searchPayload.value.filters.year.max;
+    }
+    if (searchPayload.value.filters.mileage.max !== null) {
+        q.mileage_max = searchPayload.value.filters.mileage.max;
     }
 
     const loc = searchPayload.value.location;

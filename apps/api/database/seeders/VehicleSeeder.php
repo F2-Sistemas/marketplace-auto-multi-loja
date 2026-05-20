@@ -25,7 +25,7 @@ class VehicleSeeder extends Seeder
         $cities = City::all();
         $brands = Brand::all();
 
-        if ($stores->isEmpty() || $cities->isEmpty() || $brands->isEmpty()) {
+        if ($stores->isEmpty() || $cities->isEmpty() || $brands->isEmpty() || Vehicle::exists()) {
             return;
         }
 
@@ -51,6 +51,21 @@ class VehicleSeeder extends Seeder
             'Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Travas Elétricas',
             'Alarme', 'Freio ABS', 'Airbag', 'Rodas de Liga Leve', 'Bancos de Couro',
             'Central Multimídia', 'Teto Solar', 'Câmera de Ré', 'Sensor de Estacionamento',
+        ];
+
+        // Special flags: positive (commercial) and alert (informational)
+        $positiveFlags = [
+            'aceita_troca',
+            'desconto_troca_usado',
+            'aceita_ofertas',
+            'carro_blindado',
+            'vidros_blindados',
+            'gnv_glp',
+        ];
+
+        $alertFlags = [
+            'carro_sinistro',
+            'apenas_documentos_ok',
         ];
 
         foreach ($stores as $store) {
@@ -101,12 +116,32 @@ class VehicleSeeder extends Seeder
                     ]);
                 }
 
-                // Create 4-6 features for this vehicle
+                // Create 4-6 standard features for this vehicle
                 $selectedFeatures = fake()->randomElements($featuresList, fake()->numberBetween(4, 7));
                 foreach ($selectedFeatures as $featName) {
                     VehicleFeature::create([
                         'vehicle_id' => $vehicle->id,
                         'name' => $featName,
+                    ]);
+                }
+
+                // Assign 0-2 positive flags randomly
+                if (fake()->boolean(60)) {
+                    $flags = fake()->randomElements($positiveFlags, fake()->numberBetween(1, 2));
+                    foreach ($flags as $flag) {
+                        VehicleFeature::create([
+                            'vehicle_id' => $vehicle->id,
+                            'name' => $flag,
+                        ]);
+                    }
+                }
+
+                // Assign 0-1 alert flag (less common)
+                if (fake()->boolean(20)) {
+                    $alertFlag = fake()->randomElement($alertFlags);
+                    VehicleFeature::create([
+                        'vehicle_id' => $vehicle->id,
+                        'name' => $alertFlag,
                     ]);
                 }
             }

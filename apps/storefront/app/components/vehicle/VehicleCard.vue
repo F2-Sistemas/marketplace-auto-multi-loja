@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import type { Vehicle } from '~/composables/useTenant';
 import { useI18n } from '~/composables/useI18n';
 import UiCard from '~/components/ui/UiCard.vue';
@@ -8,20 +9,22 @@ interface Props {
     vehicle: Vehicle;
 }
 defineProps<Props>();
-defineEmits<{
-    (e: 'click'): void;
-}>();
 
+const router = useRouter();
 const { t } = useI18n();
 const { handleImageError } = useImageFallback();
 
 const formatPrice = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
+
+const goToDetail = (vehicle: Vehicle) => {
+    router.push(`/vehicle/${vehicle.id}`);
+};
 </script>
 
 <template>
-    <UiCard hover @click="$emit('click')" class="group cursor-pointer flex flex-col h-full">
+    <UiCard hover @click="goToDetail(vehicle)" class="group cursor-pointer flex flex-col h-full">
         <!-- Image Wrapper -->
         <div class="relative aspect-video overflow-hidden bg-slate-950">
             <img

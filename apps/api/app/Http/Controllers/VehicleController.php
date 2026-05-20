@@ -36,6 +36,10 @@ class VehicleController extends Controller
             'mileage_max',
             'transmission',
             'fuel',
+            'body_type',
+            'type',
+            'features_include',
+            'features_exclude',
             'lat',
             'lng',
             'radius',
@@ -63,7 +67,7 @@ class VehicleController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $vehicle = Vehicle::with(['brand', 'model', 'city.state', 'store', 'images' => function ($q) {
+        $vehicle = Vehicle::with(['brand', 'model', 'city.state', 'store', 'features', 'images' => function ($q) {
             $q->orderBy('order', 'asc');
         }])->find($id);
 

@@ -161,6 +161,26 @@ const storesList = computed(() => {
             </p>
         </div>
 
+        <!-- Seja um Parceiro Banner -->
+        <div class="bg-gradient-to-r from-neutral-900 to-brand-950 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="space-y-2 relative z-10">
+                <span class="inline-block bg-brand-500 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
+                    Sua Loja Aqui
+                </span>
+                <h3 class="text-xl md:text-2xl font-semibold tracking-tight">Quer anunciar seus veículos na RedeRevenda?</h3>
+                <p class="text-xs text-neutral-300 max-w-xl font-light">
+                    Crie um site próprio para sua concessionária, integre seu estoque em minutos e receba contatos de clientes diretamente no WhatsApp da sua equipe comercial.
+                </p>
+            </div>
+            <NuxtLink to="/quero-anunciar" class="relative z-10 shrink-0">
+                <UiButton variant="primary" size="md" class="font-semibold flex items-center gap-2 shadow-lg">
+                    <span>Cadastrar Minha Loja</span>
+                    <iconify-icon icon="tabler:arrow-right" class="text-sm"></iconify-icon>
+                </UiButton>
+            </NuxtLink>
+        </div>
+
         <!-- Active Loading Spinner -->
         <div v-if="pending" class="py-16 flex flex-col items-center justify-center space-y-4">
             <iconify-icon icon="tabler:loader" class="text-4xl text-brand-500 animate-spin"></iconify-icon>

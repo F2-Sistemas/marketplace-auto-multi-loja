@@ -8,9 +8,7 @@ interface Props {
     loading?: boolean;
 }
 defineProps<Props>();
-defineEmits<{
-    (e: 'select-vehicle', vehicle: Vehicle): void;
-}>();
+// Cards navigate internally to /vehicle/:id — no emit needed
 
 const { t } = useI18n();
 </script>
@@ -56,7 +54,6 @@ const { t } = useI18n();
             v-for="vehicle in vehicles"
             :key="vehicle.id"
             :vehicle="vehicle"
-            @click="$emit('select-vehicle', vehicle)"
         />
     </div>
 </template>

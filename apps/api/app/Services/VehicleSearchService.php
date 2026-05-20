@@ -76,6 +76,15 @@ class VehicleSearchService
                 if (isset($f['body_type']) && !empty($f['body_type'])) {
                     $normalized['body_type'] = $f['body_type'];
                 }
+                if (isset($f['type']) && !empty($f['type'])) {
+                    $normalized['type'] = $f['type'];
+                }
+                if (isset($f['features_include']) && !empty($f['features_include'])) {
+                    $normalized['features_include'] = $f['features_include'];
+                }
+                if (isset($f['features_exclude']) && !empty($f['features_exclude'])) {
+                    $normalized['features_exclude'] = $f['features_exclude'];
+                }
             }
 
             // Custom Sort parameters
@@ -225,6 +234,40 @@ class VehicleSearchService
                 $query->whereIn('vehicles.body_type', $normalized['body_type']);
             } else {
                 $query->where('vehicles.body_type', '=', (string) $normalized['body_type']);
+            }
+        }
+
+        if (!empty($normalized['type'])) {
+            $query->whereHas('model', function (Builder $q) use ($normalized) {
+                $typeVal = strtolower((string) $normalized['type']);
+                if ($typeVal === 'motos' || $typeVal === 'moto') {
+                    $q->where('vehicle_models.type', '=', 'moto');
+                } else if ($typeVal === 'carros' || $typeVal === 'carro') {
+                    $q->where('vehicle_models.type', '=', 'carro');
+                }
+            });
+        }
+
+        // Apply Feature Flag Filters
+        if (!empty($normalized['features_include'])) {
+            $includes = is_array($normalized['features_include'])
+                ? $normalized['features_include']
+                : [$normalized['features_include']];
+            foreach ($includes as $flag) {
+                $query->whereHas('features', function (Builder $q) use ($flag) {
+                    $q->where('name', '=', (string) $flag);
+                });
+            }
+        }
+
+        if (!empty($normalized['features_exclude'])) {
+            $excludes = is_array($normalized['features_exclude'])
+                ? $normalized['features_exclude']
+                : [$normalized['features_exclude']];
+            foreach ($excludes as $flag) {
+                $query->whereDoesntHave('features', function (Builder $q) use ($flag) {
+                    $q->where('name', '=', (string) $flag);
+                });
             }
         }
 

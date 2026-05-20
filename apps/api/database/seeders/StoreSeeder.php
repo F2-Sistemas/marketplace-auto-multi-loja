@@ -53,52 +53,69 @@ class StoreSeeder extends Seeder
         ];
 
         foreach ($stores as $storeData) {
-            $storeId = DB::table('stores')->insertGetId([
-                'public_id' => $storeData['public_id'],
-                'name' => $storeData['name'],
-                'slug' => $storeData['slug'],
-                'status' => $storeData['status'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $store = DB::table('stores')->where('public_id', $storeData['public_id'])->first();
+            if ($store) {
+                $storeId = $store->id;
+                DB::table('stores')->where('id', $storeId)->update([
+                    'name' => $storeData['name'],
+                    'slug' => $storeData['slug'],
+                    'status' => $storeData['status'],
+                    'updated_at' => now(),
+                ]);
+            } else {
+                $storeId = DB::table('stores')->insertGetId([
+                    'public_id' => $storeData['public_id'],
+                    'name' => $storeData['name'],
+                    'slug' => $storeData['slug'],
+                    'status' => $storeData['status'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
-            // Create internal domain
-            DB::table('store_domains')->insert([
-                'store_id' => $storeId,
-                'domain' => $storeData['domain'],
-                'type' => 'internal',
-                'is_primary' => true,
-                'is_verified' => true,
-                'verified_at' => now(),
-                'status' => 'active',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // Create or update internal domain
+            $domainExists = DB::table('store_domains')
+                ->where('store_id', $storeId)
+                ->where('domain', $storeData['domain'])
+                ->exists();
 
-            // Add standard store settings
-            DB::table('store_settings')->insert([
-                [
+            if (!$domainExists) {
+                DB::table('store_domains')->insert([
                     'store_id' => $storeId,
-                    'key' => 'logo_url',
-                    'value' => 'https://api.rederevenda.com/images/default-logo.png',
+                    'domain' => $storeData['domain'],
+                    'type' => 'internal',
+                    'is_primary' => true,
+                    'is_verified' => true,
+                    'verified_at' => now(),
+                    'status' => 'active',
                     'created_at' => now(),
                     'updated_at' => now(),
-                ],
-                [
-                    'store_id' => $storeId,
-                    'key' => 'whatsapp_number',
-                    'value' => '5584999999999',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ],
-                [
-                    'store_id' => $storeId,
-                    'key' => 'accent_color',
-                    'value' => '#059669',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ],
-            ]);
+                ]);
+            }
+
+            // Add standard store settings if not exists
+            $settings = [
+                'logo_url' => 'https://api.rederevenda.com/images/default-logo.png',
+                'whatsapp_number' => '5584999999999',
+                'accent_color' => '#059669',
+            ];
+
+            foreach ($settings as $key => $value) {
+                $settingExists = DB::table('store_settings')
+                    ->where('store_id', $storeId)
+                    ->where('key', $key)
+                    ->exists();
+
+                if (!$settingExists) {
+                    DB::table('store_settings')->insert([
+                        'store_id' => $storeId,
+                        'key' => $key,
+                        'value' => $value,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
         }
     }
 }

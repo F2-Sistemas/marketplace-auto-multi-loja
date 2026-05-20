@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\PostController;
 
 Route::get('/', fn () => response()->json([
     'app' => 'AutoHub API Core',
@@ -76,3 +77,11 @@ Route::post('/api/auth/password/reset', [AuthController::class, 'resetPassword']
 Route::post('/api/auth/email/send-verification', [AuthController::class, 'sendVerification']);
 Route::post('/api/auth/email/verify', [AuthController::class, 'verifyEmail']);
 Route::put('/api/auth/profile', [AuthController::class, 'updateProfile']);
+
+// News / Posts Endpoints
+Route::get('/api/posts', [PostController::class, 'index']);
+Route::get('/api/posts/{slug}', [PostController::class, 'show']);
+Route::get('/api/admin/posts', [PostController::class, 'adminIndex']);
+Route::post('/api/admin/posts', [PostController::class, 'store']);
+Route::put('/api/admin/posts/{id}', [PostController::class, 'update']);
+Route::delete('/api/admin/posts/{id}', [PostController::class, 'destroy']);

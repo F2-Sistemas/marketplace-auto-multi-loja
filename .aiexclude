@@ -1,0 +1,4 @@
+## https://docs.cloud.google.com/code/docs/shell/write-code-gemini#generate_code_with_prompts
+apikeys.txt
+*.key
+my/sensitive/dir/*

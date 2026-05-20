@@ -62,6 +62,7 @@ export interface SearchPayload {
         transmission: string[];
         fuel: string[];
         body_type: string[];
+        type: string | null;
     };
     sort: {
         field: string;
@@ -101,6 +102,7 @@ const initialPayload = (): SearchPayload => ({
         transmission: [],
         fuel: [],
         body_type: [],
+        type: null,
     },
     sort: {
         field: 'created_at',

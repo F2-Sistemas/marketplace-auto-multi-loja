@@ -22,6 +22,7 @@ const ptBR = {
         security: 'Segurança & E-mails',
         globalSupport: 'Suporte Global',
         myTickets: 'Meus Chamados',
+        noticias: 'Gerenciar Notícias',
     },
 
     headers: {
@@ -31,6 +32,7 @@ const ptBR = {
         security: 'Simulador de Segurança & E-mails SMTP',
         globalSupport: 'Central de Suporte (Help Desk)',
         myTickets: 'Meus Chamados',
+        noticias: 'Central de Notícias & Blog (CMS)',
         subtitle: 'Estatísticas do ecossistema de marketplace em tempo real',
     },
 

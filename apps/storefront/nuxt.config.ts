@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: { enabled: true },
     css: ['~/assets/css/main.css'],
+    router: {
+        middleware: ['storeAuth'],
+    },
     vue: {
         compilerOptions: {
             isCustomElement: (tag) => tag === 'iconify-icon',

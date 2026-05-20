@@ -1,0 +1,54 @@
+### AutoHub API - News/Posts Demo Requests
+
+@baseUrl = http://localhost:8000
+@portalUrl = http://rederevenda.com
+
+### 1. List Public News/Posts (Optionally search or filter by category)
+GET {{baseUrl}}/api/posts?category=Tudo&search=GWM
+Accept: application/json
+
+### 2. Get Public Single News/Post Detail by Slug
+GET {{baseUrl}}/api/posts/gwm-poer-hibrida-flagrada-testes-sp
+Accept: application/json
+
+### 3. List Admin News/Posts (Includes drafts)
+GET {{baseUrl}}/api/admin/posts
+Accept: application/json
+
+### 4. Create News/Post (Draft/Published status with markdown content)
+POST {{baseUrl}}/api/admin/posts
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "GWM Poer Elétrica é Flagrada no Porto de Paranaguá",
+  "summary": "Primeiras unidades da picape totalmente elétrica chegam para fase final de homologação.",
+  "content": "# Testes da Poer Elétrica\nA picape da GWM começará seus testes de rodagem em rodovias estaduais paranaenses. \n\n* Autonomia estimada: **450 km**\n* Tração integral permanente.\n\nMais novidades em breve.",
+  "category": "Notícias",
+  "status": "published",
+  "image_url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=600&auto=format&fit=crop",
+  "related_links": [
+    {
+      "title": "GWM Poer híbrida é flagrada em testes finais no interior de SP",
+      "url": "/noticias/gwm-poer-hibrida-flagrada-testes-sp"
+    }
+  ]
+}
+
+### 5. Update News/Post
+PUT {{baseUrl}}/api/admin/posts/4
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "GWM Poer Elétrica é Flagrada no Porto de Paranaguá (Atualizado)",
+  "summary": "Primeiras unidades da picape totalmente elétrica chegam para fase final de homologação no Brasil.",
+  "content": "# Testes da Poer Elétrica\nA picape da GWM começará seus testes de rodagem em rodovias estaduais paranaenses. \n\n* Autonomia estimada: **450 km**\n* Tração integral permanente.\n\nMais novidades em breve.",
+  "category": "Notícias",
+  "status": "published",
+  "image_url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=600&auto=format&fit=crop"
+}
+
+### 6. Delete News/Post
+DELETE {{baseUrl}}/api/admin/posts/4
+Accept: application/json
