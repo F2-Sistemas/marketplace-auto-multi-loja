@@ -1,0 +1,135 @@
+{
+  "portal": {
+    "queroAnunciar": {
+      "breadcrumb": {
+        "home": "Home",
+        "queroAnunciar": "Quero Anunciar"
+      },
+      "banner": {
+        "partnerPortal": "Portal da Concessionária Parceira",
+        "title": "Digitalize seu estoque e venda muito mais na <span class=\"text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-200\">RedeRevenda</span>",
+        "subtitle": "Crie seu site exclusivo em segundos, integre seu estoque com o portal central e receba propostas qualificadas de compradores da sua região direto no seu WhatsApp.",
+        "stats": {
+          "accesses": "Acessos Mensais",
+          "setup": "Setup Ativo",
+          "salesFee": "Taxa de Venda"
+        },
+        "promoCard": {
+          "title": "Comece Grátis Hoje",
+          "subtitle": "14 dias de teste sem compromisso",
+          "description": "Preencha o formulário abaixo para reservar o subdomínio da sua loja e iniciar a publicação do seu estoque.",
+          "cta": "Criar Minha Loja Agora"
+        }
+      },
+      "benefits": {
+        "title": "Tudo o que sua loja precisa para vender na internet",
+        "subtitle": "Nossa plataforma oferece uma solução ponta a ponta para que você foque no que faz melhor: fechar negócios.",
+        "siteTitle": "Site Próprio Exclusivo",
+        "siteDescription": "Tenha um site moderno com a identidade e cores da sua marca para divulgar seu estoque de forma profissional.",
+        "leadsTitle": "Leads no WhatsApp",
+        "leadsDescription": "Os interessados entram em contato diretamente no seu celular, acelerando as negociações sem intermediários.",
+        "portalTitle": "Portal de Destaques",
+        "portalDescription": "Além do seu site, seus veículos são exibidos no portal RedeRevenda, ampliando a visibilidade para todo o público.",
+        "panelTitle": "Painel Simplificado",
+        "panelDescription": "Controle o estoque, visualize estatísticas de acessos e configure os dados de contato em um painel responsivo."
+      },
+      "plans": {
+        "title": "Planos flexíveis para qualquer tamanho de loja",
+        "subtitle": "Sem taxas ocultas, sem comissões sobre vendas. Escolha o plano ideal para alavancar seu estoque.",
+        "popular": "Mais Popular",
+        "monthly": {
+          "title": "Plano Mensal",
+          "description": "Perfeito para quem quer começar a experimentar.",
+          "price": "R$ 99",
+          "period": "/mês",
+          "features": {
+            "vehicles": "Até 15 veículos ativos",
+            "whatsapp": "Integração WhatsApp",
+            "noCustomDomain": "Sem Domínio Próprio"
+          }
+        },
+        "semiannual": {
+          "title": "Plano Semestral",
+          "description": "Ideal para negócios consolidados em expansão.",
+          "price": "R$ 79",
+          "period": "/mês (Total R$ 474)",
+          "features": {
+            "vehicles": "Até 50 veículos ativos",
+            "whatsapp": "Integração WhatsApp",
+            "customDomain": "Domínio Customizado (.com.br)"
+          }
+        },
+        "annual": {
+          "title": "Plano Anual",
+          "description": "A melhor economia e recursos premium ilimitados.",
+          "price": "R$ 59",
+          "period": "/mês (Total R$ 708)",
+          "features": {
+            "vehicles": "Estoque Ilimitado",
+            "whatsapp": "Integração WhatsApp",
+            "customDomain": "Domínio Customizado (.com.br)"
+          }
+        }
+      },
+      "form": {
+        "title": "Formulário de Cadastro da Loja",
+        "subtitle": "Cadastre sua loja e configure seu subdomínio exclusivo imediatamente.",
+        "success": {
+          "iconAlt": "Sucesso",
+          "title": "Parabéns! Sua loja foi criada com sucesso.",
+          "message": "Sua concessionária <strong>{name}</strong> já está ativa no sistema.",
+          "addressLabel": "Seu endereço exclusivo:",
+          "domainPrefix": "http://",
+          "managementInfo": "Para gerenciar seu estoque, acesse o painel administrativo através da plataforma com os seus dados de lojista.",
+          "cta": "Cadastrar Outra Loja"
+        },
+        "fields": {
+          "name": {
+            "label": "Nome da Concessionária *",
+            "placeholder": "Ex: Euro Select Motors"
+          },
+          "subdomain": {
+            "label": "Subdomínio Desejado *",
+            "placeholder": "Ex: euro-select",
+            "previewPrefix": "Seu site será acessível em:",
+            "previewSuffix": ".rederevenda.com"
+          },
+          "whatsapp": {
+            "label": "WhatsApp de Contato (Formatado com DDD) *",
+            "placeholder": "Ex: 5511988888888",
+            "hint": "Insira apenas números incluindo o código do país (55) e o DDD."
+          },
+          "accentColor": {
+            "label": "Cor de Destaque da Loja"
+          },
+          "plan": {
+            "label": "Escolha seu Plano",
+            "monthly": "Mensal - R$ 99/mês",
+            "semiannual": "Semestral - R$ 79/mês",
+            "annual": "Anual - R$ 59/mês"
+          }
+        },
+        "errors": {
+          "requiredFields": "Por favor, preencha todos os campos obrigatórios.",
+          "apiError": "Ocorreu um erro ao processar o seu cadastro. Tente outro subdomínio."
+        },
+        "submit": {
+          "processing": "Processando Cadastro...",
+          "cta": "Enviar Cadastro e Provisionar Loja"
+        }
+      },
+      "faq": {
+        "title": "Perguntas Frequentes",
+        "subtitle": "Esclareça suas dúvidas principais sobre a parceria.",
+        "testPeriodQuestion": "Como funciona o período de teste gratuito?",
+        "testPeriodAnswer": "Você pode testar a nossa plataforma por 14 dias sem custos. Cadastre até 5 veículos para experimentar todas as ferramentas e o painel administrativo. Não é necessário cartão de crédito.",
+        "customDomainQuestion": "Posso usar meu próprio domínio customizado?",
+        "customDomainAnswer": "Sim! Nos planos Semestral e Anual, você pode configurar um domínio próprio (ex: www.sualoja.com.br) para apontar diretamente para a sua loja de forma totalmente gratuita.",
+        "leadsArrivalQuestion": "Como os leads chegam até a minha concessionária?",
+        "leadsArrivalAnswer": "Todos os leads e propostas enviados pelos clientes no portal principal ou no seu site exclusivo são recebidos em tempo real no seu painel administrativo do Lojista e também enviados diretamente para o seu WhatsApp cadastrado.",
+        "cancelPlanQuestion": "Posso cancelar ou alterar meu plano quando quiser?",
+        "cancelPlanAnswer": "Sim. Nossos planos não possuem fidelidade ou multas de cancelamento. Você pode fazer o upgrade, downgrade ou cancelamento do seu plano a qualquer momento pelo painel."
+      }
+    }
+  }
+}
