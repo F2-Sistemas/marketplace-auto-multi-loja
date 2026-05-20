@@ -2,13 +2,19 @@
     "name": "autohub-central",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "description": "AutoHub Central - Ecossistema Multi-Loja de Marketplace de Automóveis",
     "scripts": {
-        "dev": "concurrently --kill-others-on-fail --restart-tries 3 --restart-after 2000 -n api,portal,backoffice,storefront -c blue,green,magenta,yellow \"npm run dev:api\" \"npm run dev:portal\" \"npm run dev:backoffice\" \"npm run dev:storefront\"",
+        "dev": "docker compose up",
+        "dev:nohup": "bash ./dev-nohup.sh",
+        "dev:nohup:f": "bash ./dev-nohup.sh -f",
+        "dev:concurrently": "concurrently --kill-others-on-fail --restart-tries 3 --restart-after 2000 -n api,portal,backoffice,storefront -c blue,green,magenta,yellow \"npm run dev:api\" \"npm run dev:portal\" \"npm run dev:backoffice\" \"npm run dev:storefront\"",
         "dev:api": "cd apps/api && php artisan serve --port=7031",
         "dev:portal": "cd apps/portal && npm run dev -- --port 7030",
         "dev:backoffice": "cd apps/backoffice && npm run dev -- --port 7032",
         "dev:storefront": "cd apps/storefront && npm run dev -- --port 7033",
+        "open-in-editor-server": "node ./open-in-editor-server.js",
+        "dev:open-in-editor-server": "node open-in-editor-server.js",
         "test:api": "cd apps/api && php vendor/bin/phpunit"
     },
     "devDependencies": {

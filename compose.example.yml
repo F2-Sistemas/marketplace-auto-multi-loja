@@ -1,0 +1,93 @@
+services:
+    db:
+        image: postgres:15-alpine
+        environment:
+            POSTGRES_DB: dev_rede_revendas_marketplace
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        ports:
+            - '${DATABASE_PORT:-1010}:5432'
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    redis:
+        image: redis:7-alpine
+        ports:
+            - '${REDIS_PORT:-1020}:6379'
+        restart: unless-stopped
+
+    api:
+        build:
+            context: ./apps/api
+            dockerfile: Dockerfile
+        ports:
+            - '${API_PORT:-7031}:7031'
+        environment:
+            DB_HOST: db
+            DB_PORT: 5432
+            DB_DATABASE: dev_rede_revendas_marketplace
+            DB_USERNAME: postgres
+            DB_PASSWORD: postgres
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+        volumes:
+            - ./apps/api:/app
+        depends_on:
+            - db
+            - redis
+        restart: unless-stopped
+
+    portal:
+        build:
+            context: ./apps/portal
+            dockerfile: Dockerfile
+        ports:
+            - '${PORTAL_PORT:-7030}:7030'
+        environment:
+            - API_URL=http://api:7031
+            - OPEN_IN_EDITOR_URL
+            - PROJECT_DIR=apps/portal
+        volumes:
+            - ./apps/portal:/app
+            - /app/node_modules
+        depends_on:
+            - api
+        restart: unless-stopped
+
+    backoffice:
+        build:
+            context: ./apps/backoffice
+            dockerfile: Dockerfile
+        ports:
+            - '${BACKOFFICE_PORT:-7032}:7032'
+        environment:
+            - API_URL=http://api:7031
+            - OPEN_IN_EDITOR_URL
+            - PROJECT_DIR=apps/backoffice
+        volumes:
+            - ./apps/backoffice:/app
+            - /app/node_modules
+        depends_on:
+            - api
+        restart: unless-stopped
+
+    storefront:
+        build:
+            context: ./apps/storefront
+            dockerfile: Dockerfile
+        ports:
+            - '${STOREFRONT_PORT:-7033}:7033'
+        environment:
+            - API_URL=http://api:7031
+            - OPEN_IN_EDITOR_URL
+            - PROJECT_DIR=apps/storefront
+        volumes:
+            - ./apps/storefront:/app
+            - /app/node_modules
+        depends_on:
+            - api
+        restart: unless-stopped
+
+volumes:
+    pgdata:

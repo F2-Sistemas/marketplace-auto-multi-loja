@@ -75,3 +75,4 @@ Route::post('/api/auth/password/email', [AuthController::class, 'sendResetLink']
 Route::post('/api/auth/password/reset', [AuthController::class, 'resetPassword']);
 Route::post('/api/auth/email/send-verification', [AuthController::class, 'sendVerification']);
 Route::post('/api/auth/email/verify', [AuthController::class, 'verifyEmail']);
+Route::put('/api/auth/profile', [AuthController::class, 'updateProfile']);

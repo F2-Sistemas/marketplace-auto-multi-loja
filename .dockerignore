@@ -1,0 +1,91 @@
+## Ignorar dependências e builds de todos os apps
+apps/*/node_modules/
+apps/*/.pnp/
+apps/*/.pnp.js
+apps/*/.pnpm-store/
+apps/*/.next/
+apps/*/out/
+apps/*/dist/
+apps/*/build/
+apps/*/.vercel/
+apps/*/.cache/
+apps/*/.tmp/
+apps/*/.parcel-cache/
+apps/*/.eslintcache
+apps/*/.stylelintcache
+apps/*/.turbo/
+apps/*/.tsbuildinfo
+apps/*/vendor/
+apps/*/storage/
+
+vendor/
+storage/
+
+## Ignorar arquivos de teste e cobertura
+apps/*/coverage/
+apps/*/.nyc_output/
+apps/*/__tests__/
+apps/*/__mocks__/
+apps/*/jest/
+apps/*/cypress/
+apps/*/playwright-report/
+apps/*/test-results/
+apps/*/.vitest/
+
+## Ignorar arquivos de ambiente e configs sensíveis
+apps/*/.env
+apps/*/.env*
+apps/*/.env.local
+apps/*/.env.development.local
+apps/*/.env.test.local
+apps/*/.env.production.local
+
+## Ignorar arquivos de log e debug
+apps/*/npm-debug.log*
+apps/*/yarn-debug.log*
+apps/*/yarn-error.log*
+apps/*/pnpm-debug.log*
+apps/*/lerna-debug.log*
+apps/*/*.log
+
+## Ignorar arquivos de IDE/editor
+apps/*/.vscode/
+apps/*/.idea/
+apps/*/.editorconfig
+apps/*/.prettierrc*
+apps/*/.eslintrc*
+apps/*/.stylelintrc*
+apps/*/.babelrc*
+apps/*/*.iml
+apps/*/*.swp
+apps/*/*.swo
+apps/*/*~
+
+## Ignorar arquivos de versionamento
+apps/*/.git/
+apps/*/.gitignore
+apps/*/.gitattributes
+
+## Ignorar arquivos Docker e Compose
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+compose*.yaml
+
+## Ignorar documentação e CI/CD
+*.md
+docs/
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Jenkinsfile
+
+## Ignorar arquivos do sistema operacional
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini

@@ -1,16 +1,21 @@
 export const useApi = () => {
-  const getApiUrl = (path: string = '') => {
-    // SSR context: use direct HTTP local port
-    // Client-side browser: use secure HTTPS reverse proxy
-    const apiBase = import.meta.client
-      ? 'https://api.rederevenda.com'
-      : 'http://localhost:7031';
+    const getApiUrl = (path: string = '') => {
+        let apiBase = 'https://api.rederevenda.com';
 
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return `${apiBase}${cleanPath}`;
-  };
+        if (import.meta.client) {
+            const hostname = window.location.hostname;
+            if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+                apiBase = 'http://localhost:7031';
+            }
+        } else {
+            apiBase = process.env.API_URL || 'http://localhost:7031';
+        }
 
-  return {
-    getApiUrl
-  };
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        return `${apiBase}${cleanPath}`;
+    };
+
+    return {
+        getApiUrl,
+    };
 };

@@ -20,3 +20,11 @@ vendor
 *.zip
 *.del
 _ide_helper*
+
+# Docker Local Configs
+.env
+compose.yml
+docker-compose.yml
+
+nohup*.out
+nohup*.log

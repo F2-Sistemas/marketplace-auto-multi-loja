@@ -1,5 +1,5 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Figtree", var(--font-sans);
+    --font-sans: 'Figtree', var(--font-sans);
 }

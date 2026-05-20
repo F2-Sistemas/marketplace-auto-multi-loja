@@ -24,9 +24,32 @@ export default defineNuxtConfig({
             //     // 'app.domain.com',
             // ],
             allowedHosts: true,
+            proxy: {
+                // env: OPEN_IN_EDITOR_URL='http://host.docker.internal:3001'
+                /** @url https://rederevenda.com/_nuxt/__open-in-editor?file=%2Fapp%2Fapp%2Fcomponents%2Fsearch%2FVehicleFilters.vue%3A197%3A10 */
+                '/__open-in-editor': {
+                    target:
+                        (process.env.OPEN_IN_EDITOR_URL || 'http://localhost:3001') +
+                        [
+                            true ? '?open=true' : '?open=false',
+                            process.env.PROJECT_DIR ? `&project_dir=${process.env.PROJECT_DIR}` : '',
+                        ].join(''),
+                    changeOrigin: true,
+                },
+                '/_nuxt/__open-in-editor': {
+                    target:
+                        (process.env.OPEN_IN_EDITOR_URL || 'http://localhost:3001') +
+                        [
+                            true ? '?open=true' : '?open=false',
+                            process.env.PROJECT_DIR ? `&project_dir=${process.env.PROJECT_DIR}` : '',
+                        ].join(''),
+                    changeOrigin: true,
+                },
+            },
         },
     },
     app: {
+        pageTransition: { name: 'page', mode: 'out-in' },
         head: {
             htmlAttrs: {
                 lang: 'pt-BR',

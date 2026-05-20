@@ -117,24 +117,30 @@ export function useTenant() {
 
     const { getApiUrl } = useApi();
 
-    const { data: tenantResponse } = useFetch<any>(computed(() => getApiUrl('/api/tenant')), {
-        headers: computed(() => ({
-            'X-Store-Host': hostHeader.value,
-        })),
-        watch: [hostHeader],
-    });
+    const { data: tenantResponse } = useFetch<any>(
+        computed(() => getApiUrl('/api/tenant')),
+        {
+            headers: computed(() => ({
+                'X-Store-Host': hostHeader.value,
+            })),
+            watch: [hostHeader],
+        }
+    );
 
-    const { data: vehiclesResponse } = useFetch<any>(computed(() => getApiUrl('/api/vehicles')), {
-        query: computed(() => {
-            const params: any = {};
-            if (searchQuery.value) params.q = searchQuery.value;
-            return params;
-        }),
-        headers: computed(() => ({
-            'X-Store-Host': hostHeader.value,
-        })),
-        watch: [hostHeader, searchQuery],
-    });
+    const { data: vehiclesResponse } = useFetch<any>(
+        computed(() => getApiUrl('/api/vehicles')),
+        {
+            query: computed(() => {
+                const params: any = {};
+                if (searchQuery.value) params.q = searchQuery.value;
+                return params;
+            }),
+            headers: computed(() => ({
+                'X-Store-Host': hostHeader.value,
+            })),
+            watch: [hostHeader, searchQuery],
+        }
+    );
 
     const currentStore = computed<StoreDetails>(() => {
         const t = tenantResponse.value;
@@ -150,7 +156,12 @@ export function useTenant() {
         let buttonClass =
             'border border-rose-500 text-rose-400 bg-rose-500/5 hover:bg-rose-500 hover:text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50 shadow-sm shadow-rose-500/10';
 
-        if (accent.includes('#1d4ed8') || accent.includes('#3b82f6') || accent === 'blue' || accent.includes('#0000ff')) {
+        if (
+            accent.includes('#1d4ed8') ||
+            accent.includes('#3b82f6') ||
+            accent === 'blue' ||
+            accent.includes('#0000ff')
+        ) {
             theme = 'blue';
             primaryColor = 'from-blue-600 to-indigo-700';
             accentColor = 'text-blue-400';

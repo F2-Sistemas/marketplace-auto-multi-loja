@@ -1,0 +1,91 @@
+### AutoHub API - Support Tickets Demo Requests
+
+@baseUrl = http://localhost:8000
+@portalUrl = http://rederevenda.com
+@tenant1Url = http://autocar-natal.app-loja.rederevenda.com
+
+### =========================================================================
+### Lojista Support Tickets Endpoints
+### =========================================================================
+
+### 1. List Store Tickets (Lojista View)
+GET {{baseUrl}}/api/store/tickets
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+### 2. Create New Support Ticket
+POST {{baseUrl}}/api/store/tickets
+Content-Type: application/json
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+{
+  "title": "Dúvida sobre integração de fotos",
+  "category": "suporte",
+  "message": "Olá, estou com problemas para carregar fotos em lote nos meus veículos."
+}
+
+### 3. Get Ticket Details (including Messages & Timeline)
+GET {{baseUrl}}/api/store/tickets/1
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+### 4. Send Lojista Reply
+POST {{baseUrl}}/api/store/tickets/1/reply
+Content-Type: application/json
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+{
+  "message": "Tentei limpar o cache do navegador e ainda não funcionou."
+}
+
+### 5. Close Ticket (Lojista)
+POST {{baseUrl}}/api/store/tickets/1/close
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+### 6. Rate Closed Ticket (1-5 stars)
+POST {{baseUrl}}/api/store/tickets/1/rate
+Content-Type: application/json
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+{
+  "rating": 5
+}
+
+### 7. Reopen Ticket
+POST {{baseUrl}}/api/store/tickets/1/reopen
+Accept: application/json
+Host: autocar-natal.app-loja.rederevenda.com
+
+
+### =========================================================================
+### Central Admin Support Endpoints
+### =========================================================================
+
+### 8. List All Support Tickets (Admin Help Desk View)
+GET {{baseUrl}}/api/admin/tickets
+Accept: application/json
+Host: rederevenda.com
+
+### 9. Admin Reply to Lojista Ticket
+POST {{baseUrl}}/api/admin/tickets/1/reply
+Content-Type: application/json
+Accept: application/json
+Host: rederevenda.com
+
+{
+  "message": "Olá! Verificamos o seu problema e o redimensionador de fotos foi reiniciado. Pode tentar novamente?"
+}
+
+### 10. Admin Update Ticket Category
+POST {{baseUrl}}/api/admin/tickets/1/category
+Content-Type: application/json
+Accept: application/json
+Host: rederevenda.com
+
+{
+  "category": "tecnico"
+}
