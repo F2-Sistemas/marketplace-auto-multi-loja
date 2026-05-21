@@ -74,7 +74,7 @@ class SubscriptionController extends Controller
             'accent_color' => 'nullable|string|max:255',
             'secondary_color' => 'nullable|string|max:255',
             'font_family' => 'nullable|string|in:Inter,Outfit,Roboto,Playfair Display',
-            'layout_style' => 'nullable|string|in:minimalist,advanced,grid,list',
+            'layout_style' => 'nullable|string|in:showroom,catalog,minimalist,advanced,grid,list',
         ]);
 
         if ($validator->fails()) {
@@ -82,6 +82,10 @@ class SubscriptionController extends Controller
         }
 
         $fields = $request->only(['accent_color', 'secondary_color', 'font_family', 'layout_style']);
+
+        if (isset($fields['layout_style'])) {
+            $fields['layout_style'] = $this->normalizeLayoutStyle((string) $fields['layout_style']);
+        }
 
         DB::beginTransaction();
         try {
@@ -100,5 +104,19 @@ class SubscriptionController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Erro ao salvar configurações.', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Normalize layout styles to the canonical storefront templates.
+     */
+    private function normalizeLayoutStyle(string $layoutStyle): string
+    {
+        $catalogStyles = ['catalog', 'grid', 'list'];
+
+        if (in_array($layoutStyle, $catalogStyles, true)) {
+            return 'catalog';
+        }
+
+        return 'showroom';
     }
 }

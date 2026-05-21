@@ -2,16 +2,9 @@
 import { computed } from 'vue';
 import { useRoute, useAsyncData, createError } from '#app';
 import { useApi } from '~/composables/useApi';
-import MarkdownIt from 'markdown-it';
 
 const route = useRoute();
 const { getApiUrl } = useApi();
-
-const md = new MarkdownIt({
-    html: false, // Disable raw HTML for safety
-    linkify: true,
-    typographer: true
-});
 
 // Fetch Single Post by Slug
 const { data: post, pending, error } = await useAsyncData(`post-${route.params.slug}`, async () => {
@@ -39,9 +32,53 @@ const formatDate = (dateStr: string) => {
     return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
+const escapeHtml = (value: string): string => {
+    return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+};
+
+const renderMarkdown = (content: string): string => {
+    const safeContent = escapeHtml(content);
+    const withHeadings = safeContent
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+    const withInlineFormatting = withHeadings
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    const blocks = withInlineFormatting
+        .split(/\n{2,}/)
+        .map((block) => {
+            const trimmed = block.trim();
+
+            if (trimmed.startsWith('<h1>') || trimmed.startsWith('<h2>') || trimmed.startsWith('<h3>')) {
+                return trimmed;
+            }
+
+            if (trimmed.startsWith('<ul>') || trimmed.startsWith('<ol>')) {
+                return trimmed;
+            }
+
+            const lines = trimmed.split(/\n+/).map((line) => line.trim());
+            const paragraph = lines.join('<br>');
+
+            return `<p>${paragraph}</p>`;
+        })
+        .join('');
+
+    return blocks;
+};
+
 const renderedHtml = computed(() => {
     if (!post.value?.content) return '';
-    let html = md.render(post.value.content);
+    let html = renderMarkdown(post.value.content);
 
     let links: any[] = [];
     if (post.value.related_links) {

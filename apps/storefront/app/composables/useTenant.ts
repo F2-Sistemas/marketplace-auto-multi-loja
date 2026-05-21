@@ -1,5 +1,7 @@
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useRequestHeaders, useFetch, useState } from '#app';
+
+export type StoreLayoutStyle = 'showroom' | 'catalog';
 
 export interface StoreDetails {
     name: string;
@@ -7,6 +9,9 @@ export interface StoreDetails {
     theme: string;
     primaryColor: string;
     accentColor: string;
+    secondaryColor: string;
+    fontFamily: string;
+    layoutStyle: StoreLayoutStyle;
     city: string;
     state: string;
     phone: string;
@@ -14,6 +19,7 @@ export interface StoreDetails {
     whatsapp: string;
     tagline: string;
     logoIcon: string;
+    logoUrl: string;
     accentGradient: string;
     buttonClass: string;
 }
@@ -31,6 +37,14 @@ export interface Vehicle {
     fuel: string;
     image: string;
 }
+
+export const normalizeLayoutStyle = (value?: string | null): StoreLayoutStyle => {
+    if (value === 'catalog' || value === 'grid' || value === 'list') {
+        return 'catalog';
+    }
+
+    return 'showroom';
+};
 
 const tenants: Record<string, StoreDetails> = {
     'natal-motors': {
@@ -93,25 +107,37 @@ export function useTenant() {
     const leadForm = useState('leadForm', () => ({ name: '', email: '', phone: '', message: '' }));
     const showLeadSuccess = useState('showLeadSuccess', () => false);
 
+    const mapping: Record<string, string> = {
+        'natal-motors': 'autocar-natal.app-loja.rederevenda.com',
+        'sp-veiculos': 'sp-veiculos.app-loja.rederevenda.com',
+        'euro-select': 'sp-veiculos.app-loja.rederevenda.com', // Map euro-select fallback
+    };
+
     const hostHeader = computed(() => {
         const headers = useRequestHeaders(['host']);
         const reqHost = headers.host || '';
         const clientHost = typeof window !== 'undefined' ? window.location.host : '';
         const host = clientHost || reqHost || '';
 
+        if (host === '') {
+            return mapping[currentTenantKey.value] || 'autocar-natal.app-loja.rederevenda.com';
+        }
+
+        if (host.includes('localhost') || host.includes('127.0.0.1')) {
+            return host;
+        }
+
+        if (host.endsWith('.localhost')) {
+            return host;
+        }
+
         if (
-            host &&
             host.includes('rederevenda.com') &&
             !['rederevenda.com', 'api.rederevenda.com', 'admin.rederevenda.com'].includes(host)
         ) {
             return host;
         }
 
-        const mapping: Record<string, string> = {
-            'natal-motors': 'autocar-natal.app-loja.rederevenda.com',
-            'sp-veiculos': 'sp-veiculos.app-loja.rederevenda.com',
-            'euro-select': 'sp-veiculos.app-loja.rederevenda.com', // Map euro-select fallback
-        };
         return mapping[currentTenantKey.value] || 'autocar-natal.app-loja.rederevenda.com';
     });
 
@@ -149,6 +175,9 @@ export function useTenant() {
         if (!t || t.is_portal) return fallback;
 
         const accent = t.settings?.accent_color || '#e11d48';
+        const secondaryColor = t.settings?.secondary_color || '#1e293b';
+        const fontFamily = t.settings?.font_family || 'Inter';
+        const layoutStyle = normalizeLayoutStyle(t.settings?.layout_style);
         let theme = 'red';
         let primaryColor = 'from-red-600 to-rose-700';
         let accentColor = 'text-rose-400';
@@ -188,6 +217,9 @@ export function useTenant() {
             theme: theme,
             primaryColor: primaryColor,
             accentColor: accentColor,
+            secondaryColor: secondaryColor,
+            fontFamily: fontFamily,
+            layoutStyle: layoutStyle,
             city: fallback.city,
             state: fallback.state,
             phone: t.settings?.phone || fallback.phone,
@@ -195,6 +227,7 @@ export function useTenant() {
             whatsapp: t.settings?.whatsapp_number || fallback.whatsapp,
             tagline: t.settings?.tagline || fallback.tagline,
             logoIcon: fallback.logoIcon,
+            logoUrl: t.settings?.logo_url || '',
             accentGradient: accentGradient,
             buttonClass: buttonClass,
         };

@@ -106,7 +106,7 @@ const handleFavoriteClick = (e: Event) => {
         <div
             :class="[
                 'relative bg-neutral-100 overflow-hidden shrink-0',
-                layout === 'list' ? 'w-full sm:w-72 md:w-80 h-48 sm:h-auto' : 'w-full aspect-video',
+                layout === 'list' ? 'w-full sm:w-72 md:w-80 h-48 sm:h-[240px] md:h-[260px]' : 'w-full aspect-video',
             ]"
             @mouseenter="isHovering = true"
             @mouseleave="isHovering = false"
@@ -118,7 +118,7 @@ const handleFavoriteClick = (e: Event) => {
                     :src="displayImage"
                     :alt="`${vehicle.title} — foto ${currentIndex + 1}`"
                     @error="handleImageError($event, vehicle.title)"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-cover object-center"
                     loading="lazy"
                 />
             </transition>

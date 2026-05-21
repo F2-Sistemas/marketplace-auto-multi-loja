@@ -7,7 +7,7 @@ export function useImageFallback() {
         const target = event.target as HTMLImageElement;
         if (target && !target.dataset.hasFailed) {
             target.dataset.hasFailed = 'true';
-            target.src = getPlaceholderImage(600, 400, 'EEE', '31343C', text);
+            target.src = getPlaceholderImage(600, 400, '31343C', 'EEE', text);
         }
     };
 

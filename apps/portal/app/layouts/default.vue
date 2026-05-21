@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { useRoute } from '#app';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '~/composables/useI18n';
 import { useFavorites } from '~/composables/useFavorites';
+import UiButton from '~/components/ui/UiButton.vue';
 
 const route = useRoute();
 const { t } = useI18n();
 const { fetchFavorites, favoriteCount } = useFavorites();
 
 const isDropdownOpen = ref(false);
+const isServicesOpen = ref(false);
 const isMoreInfoExpanded = ref(false);
+let dropdownCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+let servicesCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
 
 onMounted(() => {
     fetchFavorites();
@@ -22,11 +26,76 @@ const navLinks = [
     { label: 'Notícias', to: '/noticias' },
 ];
 
+const servicesMenuItems = computed(() => {
+    return [
+        {
+            label: t('navigation.servicesAutomotive'),
+            to: '/veiculos',
+            icon: 'tabler:wrench',
+        },
+        {
+            label: t('navigation.servicesFipe'),
+            to: '/noticias',
+            icon: 'tabler:chart-bar',
+        },
+        {
+            label: t('navigation.servicesEvaluation'),
+            to: '/veiculos',
+            icon: 'tabler:badge-3d',
+        },
+        {
+            label: t('navigation.servicesAnnouncement'),
+            to: '/quero-anunciar',
+            icon: 'tabler:rocket',
+        },
+    ];
+});
+
 const isLinkActive = (to: string) => {
     if (to === '/') {
         return route.path === '/';
     }
     return route.path.startsWith(to);
+};
+
+const openDropdown = () => {
+    if (dropdownCloseTimer !== null) {
+        window.clearTimeout(dropdownCloseTimer);
+        dropdownCloseTimer = null;
+    }
+
+    isDropdownOpen.value = true;
+};
+
+const closeDropdown = () => {
+    if (dropdownCloseTimer !== null) {
+        window.clearTimeout(dropdownCloseTimer);
+    }
+
+    dropdownCloseTimer = window.setTimeout(() => {
+        isDropdownOpen.value = false;
+        dropdownCloseTimer = null;
+    }, 160);
+};
+
+const openServices = () => {
+    if (servicesCloseTimer !== null) {
+        window.clearTimeout(servicesCloseTimer);
+        servicesCloseTimer = null;
+    }
+
+    isServicesOpen.value = true;
+};
+
+const closeServices = () => {
+    if (servicesCloseTimer !== null) {
+        window.clearTimeout(servicesCloseTimer);
+    }
+
+    servicesCloseTimer = window.setTimeout(() => {
+        isServicesOpen.value = false;
+        servicesCloseTimer = null;
+    }, 160);
 };
 </script>
 
@@ -65,6 +134,55 @@ const isLinkActive = (to: string) => {
                     >
                         {{ link.label }}
                     </NuxtLink>
+
+                    <div class="relative pb-2" @mouseenter="openServices" @mouseleave="closeServices">
+                        <button
+                            type="button"
+                            class="text-sm font-semibold uppercase tracking-wider transition-colors duration-150 py-1.5 border-b-2 text-neutral-500 border-transparent hover:text-neutral-800 flex items-center gap-1"
+                            @click="isServicesOpen = !isServicesOpen"
+                        >
+                            <span>{{ t('navigation.services') }}</span>
+                            <iconify-icon
+                                icon="tabler:chevron-down"
+                                :class="[
+                                    'text-[10px] text-neutral-400 transition-transform duration-200',
+                                    {
+                                        'rotate-180': isServicesOpen,
+                                    },
+                                ]"
+                            ></iconify-icon>
+                        </button>
+
+                        <div
+                            v-show="isServicesOpen"
+                            class="absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-1 duration-150"
+                        >
+                            <div class="border-b border-neutral-100 px-4 py-3">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                                    {{ t('navigation.services') }}
+                                </span>
+                            </div>
+
+                            <NuxtLink
+                                v-for="item in servicesMenuItems"
+                                :key="item.to"
+                                :to="item.to"
+                                class="flex items-center gap-3 px-4 py-3 transition hover:bg-neutral-50"
+                                @click="isServicesOpen = false"
+                            >
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700"
+                                >
+                                    <iconify-icon :icon="item.icon" class="text-lg"></iconify-icon>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-semibold text-neutral-800">
+                                        {{ item.label }}
+                                    </span>
+                                </span>
+                            </NuxtLink>
+                        </div>
+                    </div>
                 </nav>
 
                 <!-- Dynamic CTA / Login dropdown -->
@@ -105,13 +223,9 @@ const isLinkActive = (to: string) => {
                     </NuxtLink>
 
                     <!-- Entrar Dropdown (Webmotors style) -->
-                    <div 
-                        class="relative" 
-                        @mouseenter="isDropdownOpen = true" 
-                        @mouseleave="isDropdownOpen = false"
-                    >
-                        <button 
-                            @click="isDropdownOpen = !isDropdownOpen" 
+                    <div class="relative pb-2" @mouseenter="openDropdown" @mouseleave="closeDropdown">
+                        <button
+                            @click="isDropdownOpen = !isDropdownOpen"
                             class="px-4 h-9 font-semibold text-xs rounded-button bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition duration-150 cursor-pointer flex items-center gap-1.5 shadow-xs"
                         >
                             <iconify-icon icon="tabler:user" class="text-sm"></iconify-icon>
@@ -122,12 +236,41 @@ const isLinkActive = (to: string) => {
                             ></iconify-icon>
                         </button>
                         
-                        <div 
-                            v-show="isDropdownOpen" 
-                            class="absolute right-0 mt-2 w-64 bg-white border border-neutral-200 rounded-xl shadow-lg py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                        <div
+                            v-show="isDropdownOpen"
+                            class="absolute right-0 top-full w-80 overflow-hidden bg-white border border-neutral-200 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                            @mouseenter="openDropdown"
+                            @mouseleave="closeDropdown"
                         >
-                            <div class="px-4 py-2 border-b border-neutral-100">
-                                <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Identifique-se</span>
+                            <div class="px-4 py-4 border-b border-neutral-100 space-y-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="space-y-1">
+                                        <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                                            {{ t('auth.identify') }}
+                                        </span>
+                                        <p class="text-sm font-semibold text-neutral-800 leading-snug">
+                                            {{ t('auth.loginPrompt') }}
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        @click="isDropdownOpen = false"
+                                        class="text-neutral-400 transition hover:text-neutral-700"
+                                        aria-label="Fechar"
+                                    >
+                                        <iconify-icon icon="tabler:x" class="text-lg"></iconify-icon>
+                                    </button>
+                                </div>
+
+                                <UiButton
+                                    to="/admin"
+                                    variant="primary"
+                                    size="md"
+                                    class="w-full font-semibold"
+                                    @click="isDropdownOpen = false"
+                                >
+                                    {{ t('auth.loginButton') }}
+                                </UiButton>
                             </div>
                             
                             <!-- Sou Cliente -->
@@ -137,8 +280,8 @@ const isLinkActive = (to: string) => {
                                         <iconify-icon icon="tabler:user" class="text-lg"></iconify-icon>
                                     </div>
                                     <div>
-                                        <div class="text-xs font-bold text-neutral-800">Sou Cliente</div>
-                                        <div class="text-[10px] text-neutral-400 font-normal">Acessar meus favoritos</div>
+                                        <div class="text-xs font-bold text-neutral-800">{{ t('auth.clientArea') }}</div>
+                                        <div class="text-[10px] text-neutral-400 font-normal">{{ t('auth.clientAreaDesc') }}</div>
                                     </div>
                                 </div>
                             </NuxtLink>
@@ -150,8 +293,8 @@ const isLinkActive = (to: string) => {
                                         <iconify-icon icon="tabler:building-store" class="text-lg"></iconify-icon>
                                     </div>
                                     <div>
-                                        <div class="text-xs font-bold text-neutral-800">Sou Lojista / Parceiro</div>
-                                        <div class="text-[10px] text-neutral-400 font-normal">Acessar meu painel administrativo</div>
+                                        <div class="text-xs font-bold text-neutral-800">{{ t('auth.partnerArea') }}</div>
+                                        <div class="text-[10px] text-neutral-400 font-normal">{{ t('auth.partnerAreaDesc') }}</div>
                                     </div>
                                 </div>
                             </NuxtLink>
@@ -159,8 +302,8 @@ const isLinkActive = (to: string) => {
                             <div class="border-t border-neutral-100 my-1"></div>
 
                             <!-- Quero ser um parceiro link -->
-                            <NuxtLink to="/quero-anunciar" @click="isDropdownOpen = false" class="block px-4 py-2.5 hover:bg-neutral-50 transition text-center text-xs font-bold text-brand-600">
-                                Quero fazer parte da rede &rarr;
+                            <NuxtLink to="/quero-anunciar" @click="isDropdownOpen = false" class="block px-4 py-3 hover:bg-neutral-50 transition text-center text-xs font-bold text-brand-600">
+                                {{ t('auth.joinNetwork') }} &rarr;
                             </NuxtLink>
                         </div>
                     </div>

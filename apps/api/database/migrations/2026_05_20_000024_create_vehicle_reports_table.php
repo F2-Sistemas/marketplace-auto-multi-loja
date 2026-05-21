@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class() extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('vehicle_reports', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('vehicle_id')->nullable()->constrained('vehicles')->nullOnDelete();
+            $table->foreignId('store_id')->nullable()->constrained('stores')->nullOnDelete();
+            $table->string('vehicle_title');
+            $table->string('vehicle_slug');
+            $table->string('store_name')->nullable();
+            $table->string('reason');
+            $table->text('details')->nullable();
+            $table->string('status')->default('pending');
+            $table->string('reporter_name')->nullable();
+            $table->string('reporter_email')->nullable();
+            $table->string('reporter_ip')->nullable();
+            $table->text('user_agent')->nullable();
+            $table->timestamp('reviewed_at')->nullable();
+            $table->timestamps();
+
+            $table->index('vehicle_id');
+            $table->index('store_id');
+            $table->index('status');
+            $table->index('reason');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('vehicle_reports');
+    }
+};

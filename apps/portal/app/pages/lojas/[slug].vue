@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue';
-import { useRoute, useFetch } from '#app';
+import { computed, nextTick, ref, watch } from 'vue';
+import { useRoute, useRouter, useFetch } from '#app';
 import { useI18n } from '~/composables/useI18n';
 import Breadcrumb from '~/components/layout/Breadcrumb.vue';
 import StoreHero from '~/components/stores/StoreHero.vue';
 import StoreInfo from '~/components/stores/StoreInfo.vue';
-import VehicleCard from '~/components/vehicles/VehicleCard.vue';
 import VehicleGrid from '~/components/vehicles/VehicleGrid.vue';
 import UiButton from '~/components/ui/UiButton.vue';
 import UiPagination from '~/components/ui/UiPagination.vue';
@@ -15,12 +14,116 @@ definePageMeta({
 });
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 
 const { getApiUrl } = useApi();
+const isApplyingRouteState = ref(false);
+const searchInput = ref('');
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 // Fetch inventory to compute this store and filter its vehicles
 const { data: response, pending, error } = await useFetch<any>(getApiUrl('/api/vehicles?per_page=100'));
+
+const SORT_OPTIONS = ['price_asc', 'price_desc', 'year_desc', 'mileage_asc'] as const;
+const LAYOUT_OPTIONS = ['grid', 'list'] as const;
+
+const getQueryStringValue = (value: unknown): string => {
+    if (typeof value !== 'string') {
+        return '';
+    }
+
+    return value.trim();
+};
+
+const isValidSort = (value: string): boolean => {
+    return SORT_OPTIONS.includes(value as (typeof SORT_OPTIONS)[number]);
+};
+
+const isValidLayout = (value: string): boolean => {
+    return LAYOUT_OPTIONS.includes(value as (typeof LAYOUT_OPTIONS)[number]);
+};
+
+const getStoredLayoutView = (): 'grid' | 'list' => {
+    if (!import.meta.client) {
+        return 'grid';
+    }
+
+    const savedLayout = localStorage.getItem('auto-hub:dealership-layout');
+    if (savedLayout === 'grid' || savedLayout === 'list') {
+        return savedLayout;
+    }
+
+    return 'grid';
+};
+
+const buildRouteQuery = () => {
+    const query: Record<string, string> = {};
+
+    const searchValue = searchQuery.value.trim();
+    if (searchValue !== '') {
+        query.q = searchValue;
+    }
+
+    if (selectedTransmission.value !== '') {
+        query.transmission = selectedTransmission.value;
+    }
+
+    if (selectedFuel.value !== '') {
+        query.fuel = selectedFuel.value;
+    }
+
+    if (sortBy.value !== 'price_asc') {
+        query.sort = sortBy.value;
+    }
+
+    if (currentPage.value > 1) {
+        query.page = String(currentPage.value);
+    }
+
+    query.layout = layoutView.value;
+
+    return query;
+};
+
+const updateRouteQuery = async () => {
+    if (isApplyingRouteState.value) {
+        return;
+    }
+
+    const nextQuery = {
+        ...route.query,
+        ...buildRouteQuery(),
+    };
+
+    if (searchQuery.value.trim() === '') {
+        delete nextQuery.q;
+    }
+
+    if (selectedTransmission.value === '') {
+        delete nextQuery.transmission;
+    }
+
+    if (selectedFuel.value === '') {
+        delete nextQuery.fuel;
+    }
+
+    if (sortBy.value === 'price_asc') {
+        delete nextQuery.sort;
+    }
+
+    if (currentPage.value <= 1) {
+        delete nextQuery.page;
+    }
+
+    nextQuery.layout = layoutView.value;
+
+    await router.replace({ query: nextQuery });
+
+    if (import.meta.client) {
+        localStorage.setItem('auto-hub:dealership-layout', layoutView.value);
+    }
+};
 
 const store = computed(() => {
     if (!response.value || !response.value.data) return null;
@@ -117,11 +220,6 @@ const currentPage = ref(1);
 const layoutView = ref<'grid' | 'list'>('grid');
 const itemsPerPage = 6;
 
-// Reset pagination when filter changes
-watch([searchQuery, selectedTransmission, selectedFuel, sortBy], () => {
-    currentPage.value = 1;
-});
-
 // Compute unique transmission and fuel types for filtering from current dealership inventory
 const transmissionOptions = computed(() => {
     const options = new Set<string>();
@@ -142,6 +240,35 @@ const fuelOptions = computed(() => {
     });
     return Array.from(options);
 });
+
+const applyRouteFilters = async () => {
+    isApplyingRouteState.value = true;
+
+    const querySearch = getQueryStringValue(route.query.q);
+    const queryTransmission = getQueryStringValue(route.query.transmission);
+    const queryFuel = getQueryStringValue(route.query.fuel);
+    const querySort = getQueryStringValue(route.query.sort);
+    const queryPage = getQueryStringValue(route.query.page);
+    const queryLayout = getQueryStringValue(route.query.layout);
+
+    searchInput.value = querySearch;
+    searchQuery.value = querySearch;
+
+    const transmissionAllowed = queryTransmission !== '' && transmissionOptions.value.includes(queryTransmission);
+    selectedTransmission.value = transmissionAllowed ? queryTransmission : '';
+
+    const fuelAllowed = queryFuel !== '' && fuelOptions.value.includes(queryFuel);
+    selectedFuel.value = fuelAllowed ? queryFuel : '';
+
+    sortBy.value = isValidSort(querySort) ? querySort : 'price_asc';
+    layoutView.value = isValidLayout(queryLayout) ? queryLayout : getStoredLayoutView();
+
+    const parsedPage = Number.parseInt(queryPage, 10);
+    currentPage.value = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+    await nextTick();
+    isApplyingRouteState.value = false;
+};
 
 // Filter & Sort inventory logic
 const filteredAndSortedVehicles = computed(() => {
@@ -195,22 +322,66 @@ const paginatedVehicles = computed(() => {
 });
 
 const clearFilters = () => {
+    searchInput.value = '';
     searchQuery.value = '';
     selectedTransmission.value = '';
     selectedFuel.value = '';
     sortBy.value = 'price_asc';
     currentPage.value = 1;
+    layoutView.value = getStoredLayoutView();
 };
 
-onMounted(() => {
-    const savedLayout = localStorage.getItem('auto-hub:dealership-layout');
-    if (savedLayout === 'grid' || savedLayout === 'list') {
-        layoutView.value = savedLayout;
+watch(
+    [() => route.query, transmissionOptions, fuelOptions],
+    () => {
+        void applyRouteFilters();
+    },
+    {
+        deep: true,
+        immediate: true,
     }
+);
+
+watch(searchInput, (value) => {
+    if (isApplyingRouteState.value) {
+        return;
+    }
+
+    if (searchDebounceTimer !== null) {
+        clearTimeout(searchDebounceTimer);
+    }
+
+    searchDebounceTimer = setTimeout(() => {
+        searchQuery.value = value.trim();
+        currentPage.value = 1;
+    }, 250);
 });
 
-watch(layoutView, (newVal) => {
-    localStorage.setItem('auto-hub:dealership-layout', newVal);
+watch([searchQuery, selectedTransmission, selectedFuel, sortBy, layoutView], () => {
+    if (isApplyingRouteState.value) {
+        return;
+    }
+
+    if (currentPage.value !== 1) {
+        currentPage.value = 1;
+        return;
+    }
+
+    void updateRouteQuery();
+});
+
+watch(currentPage, () => {
+    if (isApplyingRouteState.value) {
+        return;
+    }
+
+    void updateRouteQuery();
+});
+
+watch(totalPages, () => {
+    if (totalPages.value > 0 && currentPage.value > totalPages.value) {
+        currentPage.value = totalPages.value;
+    }
 });
 </script>
 
@@ -268,7 +439,7 @@ watch(layoutView, (newVal) => {
                             <div class="relative">
                                 <input
                                     id="search"
-                                    v-model="searchQuery"
+                                    v-model="searchInput"
                                     type="text"
                                     placeholder="Ex: Hilux, flex, sedan..."
                                     class="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 placeholder:text-neutral-400"

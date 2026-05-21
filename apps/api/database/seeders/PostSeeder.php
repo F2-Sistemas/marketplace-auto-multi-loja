@@ -89,7 +89,7 @@ Aqui estão 5 dicas fáceis que fazem toda a diferença:
 3. **Use o freio motor:** Antecipe as paradas nos semáforos tirando o pé do acelerador.
 4. **Desligue o ar-condicionado em dias amenos:** O compressor consome potência do motor.
 5. **Não carregue peso desnecessário:** Limpe o porta-malas de ferramentas e tralhas pesadas.",
-                'image_url' => 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=600&auto=format&fit=crop',
+                'image_url' => 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=800&auto=format&fit=crop',
                 'category' => 'Dicas',
                 'views_count' => 980,
                 'status' => 'published',
@@ -103,4 +103,3 @@ Aqui estão 5 dicas fáceis que fazem toda a diferença:
         }
     }
 }
-

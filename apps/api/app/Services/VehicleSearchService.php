@@ -118,7 +118,7 @@ class VehicleSearchService
 
         // 2. Build Query
         $query = Vehicle::query()
-            ->with(['brand', 'model', 'city.state', 'store', 'images' => function ($q) {
+            ->with(['brand', 'model', 'city.state', 'store.settings', 'images' => function ($q) {
                 $q->orderBy('order', 'asc');
             }])
             ->where('vehicles.status', '=', $normalized['status'] ?? 'published');

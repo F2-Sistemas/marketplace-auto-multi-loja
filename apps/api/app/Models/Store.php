@@ -41,6 +41,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Store extends Model
 {
     /**
+     * Attributes appended to the JSON representation.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'logo_url',
+        'whatsapp_number',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -92,5 +102,51 @@ class Store extends Model
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class);
+    }
+
+    /**
+     * Get the store logo URL from settings.
+     */
+    public function getLogoUrlAttribute(): string
+    {
+        $logoUrl = $this->resolveSettingValue('logo_url');
+        if ($logoUrl !== '') {
+            return $logoUrl;
+        }
+
+        return 'https://api.rederevenda.com/images/default-logo.png';
+    }
+
+    /**
+     * Get the store WhatsApp number from settings.
+     */
+    public function getWhatsappNumberAttribute(): string
+    {
+        $whatsappNumber = $this->resolveSettingValue('whatsapp_number');
+        if ($whatsappNumber !== '') {
+            return $whatsappNumber;
+        }
+
+        return '5584999999999';
+    }
+
+    /**
+     * Resolve a store setting value with a consistent fallback.
+     */
+    private function resolveSettingValue(string $key): string
+    {
+        if ($this->relationLoaded('settings')) {
+            $setting = $this->settings->firstWhere('key', $key);
+            if ($setting !== null && filled($setting->value)) {
+                return (string) $setting->value;
+            }
+        }
+
+        $setting = $this->settings()->where('key', $key)->first();
+        if ($setting === null || !filled($setting->value)) {
+            return '';
+        }
+
+        return (string) $setting->value;
     }
 }

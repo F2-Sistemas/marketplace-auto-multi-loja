@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: { enabled: true },
+    buildDir: '/tmp/marketplace-portal-nuxt',
     css: ['~/assets/css/main.css'],
     vue: {
         compilerOptions: {
@@ -46,6 +47,11 @@ export default defineNuxtConfig({
                     changeOrigin: true,
                 },
             },
+        },
+    },
+    nitro: {
+        output: {
+            dir: '/tmp/marketplace-portal-output',
         },
     },
     app: {

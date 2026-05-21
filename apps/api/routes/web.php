@@ -3,11 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\VehiclePhoneViewController;
+use App\Http\Controllers\InterestListController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\VehicleReportController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PostController;
@@ -25,6 +28,8 @@ Route::get('/api/tenant', [TenantController::class, 'show']);
 Route::get('/api/vehicles', [VehicleController::class, 'index']);
 Route::post('/api/vehicles/search', [VehicleController::class, 'search']);
 Route::get('/api/vehicles/{id}', [VehicleController::class, 'show']);
+Route::post('/api/vehicles/{id}/report', [VehicleReportController::class, 'store']);
+Route::post('/api/vehicles/{id}/phone-view', [VehiclePhoneViewController::class, 'store']);
 
 // Auxiliary Helpers for Filters
 Route::get('/api/brands', function () {
@@ -70,6 +75,13 @@ Route::post('/api/store/vehicles/{id}/status', [VehicleController::class, 'updat
 // Customer Favoriting Features
 Route::get('/api/favorites', [FavoriteController::class, 'index']);
 Route::post('/api/favorites/{vehicle_id}/toggle', [FavoriteController::class, 'toggle']);
+
+// Customer Interest Lists
+Route::get('/api/interest-lists', [InterestListController::class, 'index']);
+Route::post('/api/interest-lists', [InterestListController::class, 'store']);
+Route::put('/api/interest-lists/{id}', [InterestListController::class, 'update']);
+Route::post('/api/interest-lists/{id}/vehicles', [InterestListController::class, 'addVehicle']);
+Route::get('/api/interest-lists/{slug}', [InterestListController::class, 'show']);
 
 // Authentication, Password Recovery & Email Verification
 Route::post('/api/auth/password/email', [AuthController::class, 'sendResetLink']);

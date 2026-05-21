@@ -67,7 +67,7 @@ class VehicleController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $vehicle = Vehicle::with(['brand', 'model', 'city.state', 'store', 'features', 'images' => function ($q) {
+        $vehicle = Vehicle::with(['brand', 'model', 'city.state', 'store.settings', 'features', 'images' => function ($q) {
             $q->orderBy('order', 'asc');
         }])->find($id);
 

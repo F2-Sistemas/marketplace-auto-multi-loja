@@ -1,0 +1,27 @@
+model = "gpt-5.4-mini"
+
+approvals_reviewer = "user"
+personality = "pragmatic"
+
+
+ask_for_approval = "never"
+sandbox = "workspace-write"
+
+# melhora contexto em projetos grandes
+model_reasoning_effort = "medium"
+
+# permite acesso a subpastas do monorepo
+additional_writable_directories = [
+  ".",
+]
+
+# evita perguntas excessivas
+approval_policy = "never"
+
+# melhor para agentes longos
+experimental_resume = true
+
+# reduz interrupções
+disable_response_storage = false
+
+trust_level = "trusted"

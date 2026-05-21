@@ -5,11 +5,12 @@ import { useI18n } from '~/composables/useI18n';
 import Breadcrumb from '~/components/layout/Breadcrumb.vue';
 import VehicleDetailGallery from '~/components/vehicles/VehicleDetailGallery.vue';
 import VehicleDetailSummary from '~/components/vehicles/VehicleDetailSummary.vue';
+import VehicleShareActions from '~/components/vehicles/VehicleShareActions.vue';
 import VehicleSpecs from '~/components/vehicles/VehicleSpecs.vue';
 import LeadForm from '~/components/leads/LeadForm.vue';
 import UiCard from '~/components/ui/UiCard.vue';
-import UiBadge from '~/components/ui/UiBadge.vue';
 import UiButton from '~/components/ui/UiButton.vue';
+import UiModal from '~/components/ui/UiModal.vue';
 
 definePageMeta({
     layout: 'default',
@@ -24,16 +25,27 @@ const { getApiUrl } = useApi();
 const { data: response, pending, error } = await useFetch<any>(getApiUrl('/api/vehicles?per_page=100'));
 
 const vehicle = computed(() => {
-    if (!response.value || !response.value.data) return null;
-    const match = response.value.data.find((v: any) => v.slug === route.params.slug);
-    if (!match) return null;
+    if (!response.value || !response.value.data) {
+        return null;
+    }
+
+    const match = response.value.data.find((item: any) => item.slug === route.params.slug);
+    if (!match) {
+        return null;
+    }
+
+    const images =
+        match.images && match.images.length > 0
+            ? match.images.map((i: any) => i.image_url || i.path)
+            : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'];
+
+    const features = match.features
+        ? match.features.map((feature: any) => feature.name)
+        : ['Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Travas Elétricas', 'Freio ABS', 'Airbag'];
 
     return {
         id: match.id,
         title: match.title || `${match.brand?.name} ${match.model?.name}`,
-        store_name: match.store ? match.store.name : 'AutoHub',
-        store_slug: match.store ? match.store.slug : '',
-        store_phone: '84999999999', // Fallback standard whatsapp number for seeded stores
         brand: match.brand ? match.brand.name : '',
         model: match.model ? match.model.name : '',
         version: match.version || 'Completo',
@@ -46,14 +58,33 @@ const vehicle = computed(() => {
         color: match.color || 'Prata',
         description:
             match.description || 'Veículo em perfeito estado de conservação, revisado e com garantia de procedência.',
-        images:
-            match.images && match.images.length > 0
-                ? match.images.map((i: any) => i.image_url || i.path)
-                : ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'],
-        features: match.features
-            ? match.features.map((f: any) => f.name)
-            : ['Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Travas Elétricas', 'Freio ABS', 'Airbag'],
+        images,
+        features,
+        location_label:
+            match.city && match.city.state
+                ? `${match.city.name}/${match.city.state.uf}`
+                : match.city
+                    ? match.city.name
+                    : 'Brasil',
+        store: match.store
+            ? {
+                  name: match.store.name,
+                  slug: match.store.slug,
+                  logo: match.store.logo_url,
+                  whatsapp_number: match.store.whatsapp_number,
+                  status: match.store.status,
+                  created_at: match.store.created_at,
+              }
+            : undefined,
     };
+});
+
+const sameStoreCount = computed(() => {
+    if (!response.value || !response.value.data || !vehicle.value || !vehicle.value.store) {
+        return 0;
+    }
+
+    return response.value.data.filter((item: any) => item.store?.slug === vehicle.value.store?.slug).length;
 });
 
 // Known special flag names
@@ -98,17 +129,62 @@ const regularFeatures = computed(() => {
 });
 
 const showAlertAccordion = ref(false);
-const storefrontUrl = computed(() => {
-    if (!vehicle.value || !vehicle.value.store_slug) return '';
-    const slug = vehicle.value.store_slug;
-    if (process.client) {
-        const hostname = window.location.hostname;
-        if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-            return `http://${slug}.localhost:7033`;
-        }
-    }
-    return `https://${slug}.rederevenda.com`;
+const isReportModalOpen = ref(false);
+const isSubmittingReport = ref(false);
+const reportReason = ref('incorrect_information');
+const reportDetails = ref('');
+const reportError = ref('');
+const reportSuccess = ref('');
+
+const reportReasonOptions = computed(() => {
+    return [
+        { value: 'incorrect_information', label: t('vehicle.report.reasons.incorrectInformation') },
+        { value: 'suspected_fraud', label: t('vehicle.report.reasons.suspectedFraud') },
+        { value: 'duplicate_listing', label: t('vehicle.report.reasons.duplicateListing') },
+        { value: 'offensive_content', label: t('vehicle.report.reasons.offensiveContent') },
+        { value: 'already_sold', label: t('vehicle.report.reasons.alreadySold') },
+        { value: 'other', label: t('vehicle.report.reasons.other') },
+    ];
 });
+
+const openReportModal = () => {
+    reportError.value = '';
+    reportSuccess.value = '';
+    isReportModalOpen.value = true;
+};
+
+const closeReportModal = () => {
+    isReportModalOpen.value = false;
+};
+
+const submitReport = async () => {
+    if (!vehicle.value) {
+        return;
+    }
+
+    isSubmittingReport.value = true;
+    reportError.value = '';
+    reportSuccess.value = '';
+
+    try {
+        await $fetch(getApiUrl(`/api/vehicles/${vehicle.value.id}/report`), {
+            method: 'POST',
+            body: {
+                reason: reportReason.value,
+                details: reportDetails.value || null,
+            },
+        });
+
+        reportSuccess.value = t('vehicle.report.success');
+        reportReason.value = 'incorrect_information';
+        reportDetails.value = '';
+        closeReportModal();
+    } catch (exception) {
+        reportError.value = t('vehicle.report.failure');
+    } finally {
+        isSubmittingReport.value = false;
+    }
+};
 </script>
 
 <template>
@@ -154,7 +230,11 @@ const storefrontUrl = computed(() => {
 
                     <!-- Details & Highlights box -->
                     <div class="lg:hidden">
-                        <VehicleDetailSummary :vehicle="vehicle" />
+                        <VehicleDetailSummary
+                            :vehicle="vehicle"
+                            :same-store-count="sameStoreCount"
+                            @report="openReportModal"
+                        />
                     </div>
 
                     <!-- Description Box -->
@@ -168,7 +248,20 @@ const storefrontUrl = computed(() => {
                         <p class="text-sm font-normal text-neutral-600 leading-relaxed whitespace-pre-line">
                             {{ vehicle.description }}
                         </p>
+
+                        <div class="pt-3 border-t border-neutral-100">
+                            <button
+                                type="button"
+                                @click="openReportModal"
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-neutral-500 transition hover:text-rose-600"
+                            >
+                                <iconify-icon icon="tabler:alert-triangle" class="text-base"></iconify-icon>
+                                <span>{{ t('vehicle.report.title') }}</span>
+                            </button>
+                        </div>
                     </UiCard>
+
+                    <VehicleShareActions :vehicle="vehicle" />
 
                     <!-- Specifications Sheet -->
                     <UiCard body-class="space-y-4">
@@ -255,63 +348,103 @@ const storefrontUrl = computed(() => {
                 <!-- Right Side Column (Sticky Pricing Card + LeadForm) -->
                 <div class="space-y-6 lg:sticky lg:top-20">
                     <div class="hidden lg:block">
-                        <VehicleDetailSummary :vehicle="vehicle" />
+                        <VehicleDetailSummary
+                            :vehicle="vehicle"
+                            :same-store-count="sameStoreCount"
+                            @report="openReportModal"
+                        />
                     </div>
-
-                    <!-- Store partner details card -->
-                    <UiCard class="border-brand-100 bg-brand-50/20" body-class="p-5 flex flex-col gap-4">
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center border border-brand-200 shrink-0"
-                                >
-                                    <iconify-icon icon="tabler:building-store" class="text-xl"></iconify-icon>
-                                </div>
-                                <div>
-                                    <span
-                                        class="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block"
-                                    >
-                                        Anunciado por
-                                    </span>
-                                    <span class="text-sm font-extrabold text-neutral-800 leading-tight block">
-                                        {{ vehicle.store_name }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <UiButton
-                                variant="outline"
-                                size="sm"
-                                :to="`/lojas/${vehicle.store_slug}`"
-                                class="font-semibold border-brand-200 text-brand-700 hover:bg-brand-50 w-full justify-center"
-                            >
-                                <span>Ver Loja</span>
-                            </UiButton>
-                            <UiButton
-                                v-if="storefrontUrl"
-                                variant="primary"
-                                size="sm"
-                                :href="storefrontUrl"
-                                target="_blank"
-                                class="font-semibold bg-brand-600 hover:bg-brand-700 text-white w-full justify-center flex items-center gap-1"
-                            >
-                                <iconify-icon icon="tabler:external-link" class="text-xs shrink-0"></iconify-icon>
-                                <span class="truncate">{{ t('lead.viewOnStore') }}</span>
-                            </UiButton>
-                        </div>
-                    </UiCard>
 
                     <!-- WhatsApp lead form -->
                     <LeadForm
                         :vehicleId="vehicle.id"
                         :vehicleTitle="vehicle.title"
-                        :storeName="vehicle.store_name"
-                        :storePhone="vehicle.store_phone"
+                        :storeName="vehicle.store ? vehicle.store.name : 'AutoHub'"
+                        :storePhone="vehicle.store && vehicle.store.whatsapp_number ? vehicle.store.whatsapp_number : '84999999999'"
                     />
                 </div>
             </div>
+        </div>
+
+        <UiModal :isOpen="isReportModalOpen" maxWidth="lg" @close="closeReportModal">
+            <div class="p-6 space-y-5">
+                <div class="space-y-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-rose-500">
+                        {{ t('vehicle.report.title') }}
+                    </span>
+                    <h3 class="text-2xl font-black tracking-tight text-neutral-800">
+                        {{ t('vehicle.report.modalTitle') }}
+                    </h3>
+                    <p class="text-sm text-neutral-500 leading-relaxed">
+                        {{ t('vehicle.report.description') }}
+                    </p>
+                </div>
+
+                <div
+                    v-if="reportError"
+                    class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700"
+                >
+                    {{ reportError }}
+                </div>
+
+                <div class="space-y-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                        {{ t('vehicle.report.reasonLabel') }}
+                    </span>
+
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <button
+                            v-for="option in reportReasonOptions"
+                            :key="option.value"
+                            type="button"
+                            @click="reportReason = option.value"
+                            :class="[
+                                'rounded-xl border px-4 py-3 text-left text-sm font-semibold transition',
+                                {
+                                    'border-brand-300 bg-brand-50 text-brand-700': reportReason === option.value,
+                                    'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50': reportReason !== option.value,
+                                },
+                            ]"
+                        >
+                            {{ option.label }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                        {{ t('vehicle.report.detailsLabel') }}
+                    </label>
+                    <textarea
+                        v-model="reportDetails"
+                        rows="4"
+                        class="w-full rounded-input border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700 outline-none transition focus:border-neutral-300 focus:ring-0"
+                        :placeholder="t('vehicle.report.detailsPlaceholder')"
+                    ></textarea>
+                </div>
+
+                <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                    <UiButton variant="outline" size="md" @click="closeReportModal">
+                        {{ t('common.cancel') }}
+                    </UiButton>
+
+                    <UiButton
+                        variant="danger"
+                        size="md"
+                        :loading="isSubmittingReport"
+                        @click="submitReport"
+                    >
+                        {{ t('vehicle.report.submitButton') }}
+                    </UiButton>
+                </div>
+            </div>
+        </UiModal>
+
+        <div
+            v-if="reportSuccess"
+            class="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 shadow-lg"
+        >
+            {{ reportSuccess }}
         </div>
     </div>
 </template>

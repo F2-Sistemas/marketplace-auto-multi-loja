@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import type { Vehicle } from '~/composables/useTenant';
+import type { StoreLayoutStyle, Vehicle } from '~/composables/useTenant';
 import { useI18n } from '~/composables/useI18n';
 import UiCard from '~/components/ui/UiCard.vue';
 import UiBadge from '~/components/ui/UiBadge.vue';
 
 interface Props {
     vehicle: Vehicle;
+    layoutStyle?: StoreLayoutStyle;
 }
 defineProps<Props>();
 
@@ -24,61 +25,130 @@ const goToDetail = (vehicle: Vehicle) => {
 </script>
 
 <template>
-    <UiCard hover @click="goToDetail(vehicle)" class="group cursor-pointer flex flex-col h-full">
+    <UiCard
+        hover
+        @click="goToDetail(vehicle)"
+        :class="[
+            'group cursor-pointer flex flex-col h-full overflow-hidden',
+            {
+                'border border-slate-800 bg-slate-900/40 shadow-lg': layoutStyle !== 'catalog',
+                'border border-slate-200 bg-white shadow-sm': layoutStyle === 'catalog',
+            },
+        ]"
+    >
         <!-- Image Wrapper -->
-        <div class="relative aspect-video overflow-hidden bg-slate-950">
+        <div
+            :class="[
+                'relative overflow-hidden',
+                {
+                    'aspect-video bg-slate-950': layoutStyle !== 'catalog',
+                    'h-44 bg-slate-100': layoutStyle === 'catalog',
+                },
+            ]"
+        >
             <img
                 :src="vehicle.image"
                 :alt="`${vehicle.brand} ${vehicle.model}`"
                 @error="handleImageError($event, `${vehicle.brand} ${vehicle.model}`)"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                :class="[
+                    'h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105',
+                    {
+                        'opacity-95': layoutStyle === 'catalog',
+                    },
+                ]"
                 loading="lazy"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent"></div>
+            <div
+                :class="[
+                    'absolute inset-0',
+                    {
+                        'bg-gradient-to-t from-slate-950/40 to-transparent': layoutStyle !== 'catalog',
+                        'bg-linear-to-t from-white/20 to-transparent': layoutStyle === 'catalog',
+                    },
+                ]"
+            ></div>
         </div>
 
         <!-- Details Container -->
-        <div class="p-4 flex-grow flex flex-col justify-between">
+        <div :class="['flex flex-grow flex-col justify-between p-4', { 'p-5': layoutStyle !== 'catalog' }]">
             <div>
                 <div class="flex justify-between items-start gap-2">
                     <h3
-                        class="font-semibold text-slate-100 text-lg leading-tight group-hover:text-store transition-colors duration-200"
+                        :class="[
+                            'leading-tight transition-colors duration-200',
+                            {
+                                'text-lg font-semibold text-slate-100 group-hover:text-brand-300':
+                                    layoutStyle !== 'catalog',
+                                'text-base font-bold text-slate-900 group-hover:text-brand-600':
+                                    layoutStyle === 'catalog',
+                            },
+                        ]"
                     >
                         {{ vehicle.brand }}
-                        <span class="font-medium text-slate-300">{{ vehicle.model }}</span>
+                        <span :class="['font-medium', { 'text-slate-300': layoutStyle !== 'catalog', 'text-slate-600': layoutStyle === 'catalog' }]">
+                            {{ vehicle.model }}
+                        </span>
                     </h3>
                 </div>
-                <p class="text-xs text-slate-500 mt-1 line-clamp-1">
+                <p class="mt-1 line-clamp-1 text-xs text-slate-500">
                     {{ vehicle.version }}
                 </p>
             </div>
 
             <div class="mt-4">
                 <!-- Spec Badges -->
-                <div class="flex flex-wrap gap-1.5 mb-4">
-                    <UiBadge variant="neutral">
+                <div :class="['mb-4 flex flex-wrap gap-1.5', { 'mb-4': layoutStyle !== 'catalog', 'mb-3': layoutStyle === 'catalog' }]">
+                    <UiBadge :variant="layoutStyle === 'catalog' ? 'neutral' : 'neutral'">
                         <iconify-icon icon="tabler:calendar" class="text-xs"></iconify-icon>
                         {{ vehicle.year }}
                     </UiBadge>
-                    <UiBadge variant="neutral">
+                    <UiBadge :variant="layoutStyle === 'catalog' ? 'neutral' : 'neutral'">
                         <iconify-icon icon="tabler:road" class="text-xs"></iconify-icon>
                         {{ vehicle.mileage.toLocaleString('pt-BR') }} {{ t('specs.mileage') }}
                     </UiBadge>
-                    <UiBadge variant="neutral">
+                    <UiBadge :variant="layoutStyle === 'catalog' ? 'neutral' : 'neutral'">
                         <iconify-icon icon="tabler:settings" class="text-xs"></iconify-icon>
                         {{ vehicle.transmission }}
                     </UiBadge>
                 </div>
 
                 <!-- Price and CTA -->
-                <div class="flex justify-between items-center border-t border-slate-800/80 pt-3 mt-3">
+                <div
+                    :class="[
+                        'mt-3 flex items-center justify-between border-t pt-3',
+                        {
+                            'border-slate-800/80': layoutStyle !== 'catalog',
+                            'border-slate-200': layoutStyle === 'catalog',
+                        },
+                    ]"
+                >
                     <div>
-                        <span class="text-xs text-slate-500 block">{{ t('detail.special_price') }}</span>
-                        <span class="text-xl font-extrabold text-slate-100">{{ formatPrice(vehicle.price) }}</span>
+                        <span class="block text-xs text-slate-500">
+                            {{ t('detail.special_price') }}
+                        </span>
+                        <span
+                            :class="[
+                                'font-extrabold',
+                                {
+                                    'text-xl text-slate-100': layoutStyle !== 'catalog',
+                                    'text-lg text-slate-900': layoutStyle === 'catalog',
+                                },
+                            ]"
+                        >
+                            {{ formatPrice(vehicle.price) }}
+                        </span>
                     </div>
 
                     <span
-                        class="p-2 rounded-lg bg-slate-800/80 group-hover:bg-store-primary group-hover:text-slate-950 transition-all duration-300"
+                        :class="[
+                            'rounded-lg p-2 transition-all duration-300',
+                            {
+                                'bg-slate-800/80 text-slate-100 group-hover:bg-brand-500 group-hover:text-slate-950':
+                                    layoutStyle !== 'catalog',
+                                'bg-slate-100 text-slate-700 group-hover:bg-brand-500 group-hover:text-white':
+                                    layoutStyle === 'catalog',
+                            },
+                        ]"
                     >
                         <iconify-icon icon="tabler:chevron-right" class="w-5 h-5 block text-lg"></iconify-icon>
                     </span>
@@ -89,10 +159,4 @@ const goToDetail = (vehicle: Vehicle) => {
 </template>
 
 <style scoped>
-.group-hover\:text-store:hover {
-    color: var(--store-accent-color, #fbbf24);
-}
-.group-hover\:bg-store-primary:hover {
-    background-color: var(--store-accent-color, #fbbf24);
-}
 </style>

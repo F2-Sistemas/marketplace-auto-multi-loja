@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     devtools: { enabled: true },
+    buildDir: '/tmp/marketplace-storefront-nuxt',
     css: ['~/assets/css/main.css'],
     router: {
         middleware: ['storeAuth'],
@@ -49,6 +50,11 @@ export default defineNuxtConfig({
                     changeOrigin: true,
                 },
             },
+        },
+    },
+    nitro: {
+        output: {
+            dir: '/tmp/marketplace-storefront-output',
         },
     },
     app: {
